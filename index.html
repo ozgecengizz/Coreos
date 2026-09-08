@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -19,50 +20,61 @@
                         accentHover: '#4f46e5',
                         neonGreen: '#10b981',
                         neonAmber: '#f59e0b',
-                        neonPurple: '#8b5cf6'
+                        neonPurple: '#8b5cf6',
+                        
+                        lightBg: '#f8fafc',
+                        lightCard: '#ffffff',
+                        lightCardHover: '#f1f5f9',
+                        lightInput: '#f8fafc',
+                        lightText: '#1e293b'
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-darkBg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-white">
+<body class="bg-darkBg dark:bg-darkBg text-gray-100 dark:text-gray-100 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-white transition-colors duration-300" id="bodyRoot">
 
     <!-- Üst Komuta Merkezi Navigasyonu -->
-    <header class="bg-[#0f172a]/85 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 px-6 py-3.5">
+    <header class="bg-[#0f172a]/85 dark:bg-[#0f172a]/85 bg-white/85 backdrop-blur-md border-b border-gray-800 dark:border-gray-800 border-gray-200 sticky top-0 z-50 px-6 py-3.5 transition-colors duration-300">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div id="appLogoIcon" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent to-indigo-400 flex items-center justify-center shadow-lg shadow-accent/20">
                     <i class="fa-solid fa-bolt text-white text-sm"></i>
                 </div>
                 <div>
-                    <h1 id="appTitleDisplay" class="font-bold text-base tracking-tight text-white flex items-center gap-2">
+                    <h1 id="appTitleDisplay" class="font-bold text-base tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
                         CoreOS <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="userBadgeLabel">PRO</span>
                     </h1>
-                    <p class="text-xs text-gray-400" id="currentDateString">Bugün</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400" id="currentDateString">Bugün</p>
                 </div>
             </div>
 
-            <!-- Sağ: Görünüm Değiştirici & Profil Butonu -->
+            <!-- Sağ: Görünüm Değiştirici, Tema Butonu & Profil -->
             <div class="flex items-center gap-2">
-                <div class="hidden sm:flex items-center bg-inputBg p-1 rounded-xl border border-gray-800 text-xs gap-1">
+                <div class="hidden sm:flex items-center bg-gray-100 dark:bg-inputBg p-1 rounded-xl border border-gray-200 dark:border-gray-800 text-xs gap-1">
                     <button onclick="switchMainView('stream')" id="nav-stream" class="px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all cursor-pointer shadow-sm">Akış</button>
-                    <button onclick="switchMainView('calendar')" id="nav-calendar" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-calendar-days text-accent"></i> Takvim</button>
-                    <button onclick="switchMainView('vision')" id="nav-vision" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-mountain-sun text-neonAmber"></i> Vizyon</button>
+                    <button onclick="switchMainView('calendar')" id="nav-calendar" class="px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-calendar-days text-accent"></i> Takvim</button>
+                    <button onclick="switchMainView('vision')" id="nav-vision" class="px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-mountain-sun text-neonAmber"></i> Vizyon</button>
                 </div>
                 
+                <!-- Tema Değiştirme Butonu -->
+                <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer text-xs" title="Tema Değiştir">
+                    <i id="themeIcon" class="fa-solid fa-moon text-accent"></i>
+                </button>
+
                 <!-- Kişiselleştirme & Paylaşım Menüsü Butonu -->
-                <button onclick="openSettingsModal()" class="bg-inputBg hover:bg-gray-800 border border-gray-800 text-gray-300 px-3 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer" title="Profili Kişiselleştir & Paylaş">
+                <button onclick="openSettingsModal()" class="bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer" title="Profili Kişiselleştir & Paylaş">
                     <i class="fa-solid fa-sliders text-accent"></i>
                     <span class="hidden md:inline" id="profileNameBtn">Profil</span>
                 </button>
             </div>
         </div>
         <!-- Mobil Görünüm Sekme Barı -->
-        <div class="flex sm:hidden items-center justify-center bg-inputBg p-1 rounded-xl border border-gray-800 text-xs gap-1 mt-3">
+        <div class="flex sm:hidden items-center justify-center bg-gray-100 dark:bg-inputBg p-1 rounded-xl border border-gray-200 dark:border-gray-800 text-xs gap-1 mt-3">
             <button onclick="switchMainView('stream')" id="nav-stream-m" class="flex-1 py-1.5 rounded-lg bg-accent text-white font-medium text-center">Akış</button>
-            <button onclick="switchMainView('calendar')" id="nav-calendar-m" class="flex-1 py-1.5 rounded-lg text-gray-400 text-center">Takvim</button>
-            <button onclick="switchMainView('vision')" id="nav-vision-m" class="flex-1 py-1.5 rounded-lg text-gray-400 text-center">Vizyon</button>
+            <button onclick="switchMainView('calendar')" id="nav-calendar-m" class="flex-1 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 text-center">Takvim</button>
+            <button onclick="switchMainView('vision')" id="nav-vision-m" class="flex-1 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 text-center">Vizyon</button>
         </div>
     </header>
 
@@ -71,53 +83,52 @@
         
         <!-- Özet Kartları (Sadece Akışta Aktif) -->
         <section id="statsSection" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-cardBg border border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
+            <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group shadow-sm">
                 <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-accent/5 rounded-full blur-xl"></div>
                 <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-lg">
                     <i class="fa-solid fa-fire-flame-curved"></i>
                 </div>
                 <div>
-                    <span class="text-xs text-gray-400 font-medium">Akış Enerjisi</span>
-                    <h2 class="text-xl font-bold text-white" id="completionRate">%0 Tamamlandı</h2>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Akış Enerjisi</span>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="completionRate">%0 Tamamlandı</h2>
                 </div>
             </div>
 
-            <div class="bg-cardBg border border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
+            <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group shadow-sm">
                 <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-neonGreen/5 rounded-full blur-xl"></div>
                 <div class="w-12 h-12 rounded-xl bg-neonGreen/10 border border-neonGreen/20 flex items-center justify-center text-neonGreen text-lg">
                     <i class="fa-solid fa-check-double"></i>
                 </div>
                 <div>
-                    <span class="text-xs text-gray-400 font-medium">Aktif Görevler</span>
-                    <h2 class="text-xl font-bold text-white" id="activeTaskCount">0 Görev</h2>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Aktif Görevler</span>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="activeTaskCount">0 Görev</h2>
                 </div>
             </div>
 
-            <div class="bg-cardBg border border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
+            <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group shadow-sm">
                 <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-neonAmber/5 rounded-full blur-xl"></div>
                 <div class="w-12 h-12 rounded-xl bg-neonAmber/10 border border-neonAmber/20 flex items-center justify-center text-neonAmber text-lg">
                     <i class="fa-solid fa-lightbulb"></i>
                 </div>
                 <div>
-                    <span class="text-xs text-gray-400 font-medium">Yakalanan Fikirler</span>
-                    <h2 class="text-xl font-bold text-white" id="ideaCount">0 Fikir</h2>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Yakalanan Fikirler</span>
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="ideaCount">0 Fikir</h2>
                 </div>
             </div>
         </section>
 
-        <!-- Tarih Gezinti ve Sürtünmesiz Hızlı Yakalama Çubuğu (Sadece Akışta Aktif) -->
-        <section id="captureSection" class="bg-cardBg border border-accent/40 shadow-lg shadow-accent/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-3 relative transition-all">
-            <!-- Tarih Navigasyon Şeridi (İki yanda mini oklar) -->
-            <div class="flex items-center justify-between bg-inputBg/80 px-3 py-2 rounded-xl border border-gray-800 text-xs">
-                <button onclick="changeStreamDate(-1)" class="w-8 h-8 rounded-lg bg-cardBg hover:bg-cardHover border border-gray-700/80 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105" title="Dünün Akışı">
+        <!-- Tarih Gezinti ve Hızlı Yakalama Çubuğu (Sadece Akışta Aktif) -->
+        <section id="captureSection" class="bg-white dark:bg-cardBg border border-accent/40 shadow-lg shadow-accent/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-3 relative transition-all">
+            <div class="flex items-center justify-between bg-gray-50 dark:bg-inputBg/80 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 text-xs">
+                <button onclick="changeStreamDate(-1)" class="w-8 h-8 rounded-lg bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700/80 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105" title="Dünün Akışı">
                     <i class="fa-solid fa-chevron-left text-xs"></i>
                 </button>
-                <div class="flex items-center gap-2 font-semibold text-gray-200">
+                <div class="flex items-center gap-2 font-semibold text-gray-700 dark:text-gray-200">
                     <i class="fa-solid fa-calendar-day text-accent"></i>
                     <span id="activeDateLabel">Bugün</span>
                     <button id="todayResetBtn" onclick="resetToToday()" class="hidden text-[10px] bg-accent/20 text-accent px-2 py-0.5 rounded-md hover:bg-accent hover:text-white transition-all cursor-pointer">Bugüne Dön</button>
                 </div>
-                <button onclick="changeStreamDate(1)" class="w-8 h-8 rounded-lg bg-cardBg hover:bg-cardHover border border-gray-700/80 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105" title="Yarının Akışı">
+                <button onclick="changeStreamDate(1)" class="w-8 h-8 rounded-lg bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700/80 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105" title="Yarının Akışı">
                     <i class="fa-solid fa-chevron-right text-xs"></i>
                 </button>
             </div>
@@ -127,20 +138,19 @@
                     <i class="fa-solid fa-pen-nib"></i>
                 </div>
                 <input type="text" id="streamInput" autofocus
-                    class="flex-1 bg-transparent border-none outline-none text-gray-100 placeholder-gray-500 text-base"
+                    class="flex-1 bg-transparent border-none outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-base"
                     placeholder="Seçili güne zihnini boşalt: Fikir, görev veya plan yaz..."
                     onkeydown="handleKeyDown(event)">
             </div>
             
-            <div class="flex flex-wrap items-center justify-between pt-2 border-t border-gray-800/60 gap-2 text-xs">
-                <div class="flex items-center gap-2 text-gray-400">
+            <div class="flex flex-wrap items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800/60 gap-2 text-xs">
+                <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                     <span class="text-[11px]"><i class="fa-solid fa-circle-info mr-1 text-accent"></i> Yazılan öğeler doğrudan seçili güne işlenir.</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <!-- Saat Seçici -->
-                    <input type="time" id="streamTime" value="09:00" class="bg-inputBg text-gray-300 border border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer hover:border-gray-700 transition-all" title="Etkinlik Saati">
+                    <input type="time" id="streamTime" value="09:00" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-all" title="Etkinlik Saati">
                     
-                    <select id="streamType" class="bg-inputBg text-gray-300 border border-gray-800 rounded-xl px-3 py-1.5 outline-none text-xs font-medium cursor-pointer hover:border-gray-700 transition-all">
+                    <select id="streamType" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-1.5 outline-none text-xs font-medium cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-all">
                         <option value="idea">💡 Fikir / Not</option>
                         <option value="task">✅ Görev</option>
                         <option value="reminder">⏰ Hatırlatıcı</option>
@@ -156,23 +166,22 @@
         </section>
 
         <!-- Filtre Sekmeleri ve Motivasyon Sayaç Rozetleri (Sadece Akışta Aktif) -->
-        <section id="filterSection" class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-800 pb-3 gap-3">
+        <section id="filterSection" class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
             <div class="flex gap-2 overflow-x-auto text-xs font-medium w-full sm:w-auto">
                 <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-4 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap">Tüm Akış</button>
-                <button onclick="setFilter('idea')" id="filter-idea" class="filter-btn px-4 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Fikirler</button>
-                <button onclick="setFilter('task')" id="filter-task" class="filter-btn px-4 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Görevler</button>
-                <button onclick="setFilter('goal')" id="filter-goal" class="filter-btn px-4 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hedefler</button>
-                <button onclick="setFilter('reminder')" id="filter-reminder" class="filter-btn px-4 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hatırlatıcılar</button>
+                <button onclick="setFilter('idea')" id="filter-idea" class="filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent">Fikirler</button>
+                <button onclick="setFilter('task')" id="filter-task" class="filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent">Görevler</button>
+                <button onclick="setFilter('goal')" id="filter-goal" class="filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent">Hedefler</button>
+                <button onclick="setFilter('reminder')" id="filter-reminder" class="filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent">Hatırlatıcılar</button>
             </div>
             
-            <!-- Motivasyon Odaklı Küçük Sayaç / Durum Rozetleri -->
             <div class="flex items-center gap-2 text-xs">
-                <div class="bg-inputBg border border-gray-800 rounded-xl px-3 py-1.5 flex items-center gap-2 text-gray-300" title="Bugünkü Tamamlanan ve Yapılacak İş Durumu">
+                <div class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-1.5 flex items-center gap-2 text-gray-700 dark:text-gray-300 shadow-sm" title="Bugünkü Tamamlanan ve Yapılacak İş Durumu">
                     <span class="flex items-center gap-1 text-neonGreen font-semibold"><i class="fa-solid fa-circle-check text-[10px]"></i> <span id="badgeCompletedCount">0</span> Bitti</span>
-                    <span class="text-gray-600">|</span>
+                    <span class="text-gray-300 dark:text-gray-600">|</span>
                     <span class="flex items-center gap-1 text-neonAmber font-semibold"><i class="fa-solid fa-clock text-[10px]"></i> <span id="badgePendingCount">0</span> Bekliyor</span>
                 </div>
-                <button onclick="clearCompleted()" class="text-gray-500 hover:text-red-400 transition-colors p-2 rounded-xl bg-inputBg border border-gray-800 cursor-pointer" title="Tamamlananları Temizle">
+                <button onclick="clearCompleted()" class="text-gray-500 hover:text-red-500 transition-colors p-2 rounded-xl bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 cursor-pointer shadow-sm" title="Tamamlananları Temizle">
                     <i class="fa-solid fa-broom text-xs"></i>
                 </button>
             </div>
@@ -185,23 +194,66 @@
 
     </main>
 
-    <!-- Etkinlik Ekleme / Düzenleme Modalı -->
+    <!-- Takvim Gün Detay & Hızlı Ekleme Penceresi (Modal) -->
+    <div id="calendarDayModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+                <div>
+                    <h3 id="calModalTitle" class="font-bold text-gray-900 dark:text-white text-base">Gün Özeti</h3>
+                    <p id="calModalSubtitle" class="text-xs text-gray-500">Seçilen günün etkinlikleri</p>
+                </div>
+                <button onclick="closeCalendarDayModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- O güne ait öğelerin listesi -->
+            <div id="calModalItemsList" class="flex flex-col gap-2.5 max-h-56 overflow-y-auto pr-1">
+                <!-- Dinamik dolar -->
+            </div>
+
+            <!-- O güne hızlı öğe ekleme alanı -->
+            <div class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl p-3 flex flex-col gap-2.5 mt-2">
+                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5"><i class="fa-solid fa-plus text-accent"></i> Bu Güne Yeni Öğe Ekle</span>
+                <input type="text" id="calQuickContent" placeholder="Görev, fikir veya plan yazın..." class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <input type="time" id="calQuickTime" value="09:00" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 text-xs text-gray-700 dark:text-gray-300 outline-none">
+                        <select id="calQuickType" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 text-xs text-gray-700 dark:text-gray-300 outline-none">
+                            <option value="task">✅ Görev</option>
+                            <option value="idea">💡 Fikir</option>
+                            <option value="reminder">⏰ Hatırlatıcı</option>
+                            <option value="goal">🎯 Hedef</option>
+                        </select>
+                    </div>
+                    <button onclick="addQuickItemFromCalendar()" class="bg-accent hover:bg-accentHover text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shadow-sm">Ekle</button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
+                <button onclick="jumpToStreamFromModal()" class="text-xs text-accent hover:underline font-medium cursor-pointer flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-right"></i> Bu Günün Akışına Git
+                </button>
+                <button onclick="closeCalendarDayModal()" class="px-4 py-1.5 rounded-xl bg-gray-100 dark:bg-inputBg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all cursor-pointer text-xs">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Etkinlik Düzenleme Modalı -->
     <div id="itemModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-cardBg border border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
-                <h3 id="modalTitle" class="font-bold text-white text-base">Etkinlik Düzenle</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+                <h3 id="modalTitle" class="font-bold text-gray-900 dark:text-white text-base">Etkinlik Düzenle</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <input type="hidden" id="modalItemId">
             <div class="flex flex-col gap-3 text-xs">
                 <div>
-                    <label class="text-gray-400 block mb-1">İçerik / Başlık</label>
-                    <input type="text" id="modalContent" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent text-sm">
+                    <label class="text-gray-500 dark:text-gray-400 block mb-1">İçerik / Başlık</label>
+                    <input type="text" id="modalContent" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-800 dark:text-gray-200 outline-none focus:border-accent text-sm">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-gray-400 block mb-1">Tür</label>
-                        <select id="modalType" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent">
+                        <label class="text-gray-500 dark:text-gray-400 block mb-1">Tür</label>
+                        <select id="modalType" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
                             <option value="task">Görev</option>
                             <option value="reminder">Hatırlatıcı</option>
                             <option value="goal">Hedef</option>
@@ -209,13 +261,13 @@
                         </select>
                     </div>
                     <div>
-                        <label class="text-gray-400 block mb-1">Tarih & Saat</label>
-                        <input type="datetime-local" id="modalDate" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent">
+                        <label class="text-gray-500 dark:text-gray-400 block mb-1">Tarih & Saat</label>
+                        <input type="datetime-local" id="modalDate" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-800">
-                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-inputBg text-gray-300 hover:bg-gray-800 transition-all cursor-pointer text-xs">İptal</button>
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100 dark:border-gray-800">
+                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-inputBg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all cursor-pointer text-xs">İptal</button>
                 <button onclick="saveModalItem()" class="px-4 py-2 rounded-xl bg-accent hover:bg-accentHover text-white font-bold transition-all cursor-pointer text-xs">Kaydet</button>
             </div>
         </div>
@@ -223,50 +275,47 @@
 
     <!-- Profil, Kişiselleştirme & Paylaşım Modalı -->
     <div id="settingsModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-cardBg border border-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
-                <h3 class="font-bold text-white text-base flex items-center gap-2">
+        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+                <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
                     <i class="fa-solid fa-sliders text-accent"></i> Kişisel Alanı Yapılandır & Paylaş
                 </h3>
-                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <div class="flex flex-col gap-4 text-xs">
-                <!-- Profil Kimliği -->
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-gray-300 font-semibold">Uygulama / Profil Adı</label>
-                    <input type="text" id="settingsAppName" placeholder="Örn: CoreOS" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 outline-none focus:border-accent text-xs">
-                    <span class="text-[10px] text-gray-500">Bu araç tamamen size özeldir. Verileriniz tarayıcınızda (localStorage) güvenle saklanır.</span>
+                    <label class="text-gray-700 dark:text-gray-300 font-semibold">Uygulama / Profil Adı</label>
+                    <input type="text" id="settingsAppName" placeholder="Örn: CoreOS" class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2.5 text-gray-800 dark:text-gray-200 outline-none focus:border-accent text-xs">
+                    <span class="text-[10px] text-gray-500">Bu araç tamamen size özeldir. Verileriniz tarayıcınızda güvenle saklanır.</span>
                 </div>
 
-                <!-- Veri İçe/Dışa Aktarım (Paylaşım ve Yedekleme) -->
-                <div class="bg-inputBg/50 border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
-                    <h4 class="font-bold text-gray-200 flex items-center gap-1.5"><i class="fa-solid fa-share-nodes text-accent"></i> Veri Yedekleme ve Taşıma</h4>
-                    <p class="text-[11px] text-gray-400">Verilerinizi başka bir cihaza aktarabilir veya başkalarıyla paylaşmak için JSON formatında dışa/içe aktarabilirsiniz.</p>
+                <div class="bg-gray-50 dark:bg-inputBg/50 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+                    <h4 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5"><i class="fa-solid fa-share-nodes text-accent"></i> Veri Yedekleme ve Taşıma</h4>
+                    <p class="text-[11px] text-gray-500 dark:text-gray-400">Verilerinizi başka bir cihaza aktarabilir veya başkalarıyla paylaşmak için JSON formatında dışa/içe aktarabilirsiniz.</p>
                     <div class="flex flex-wrap gap-2 pt-1">
-                        <button onclick="exportData()" class="bg-cardBg hover:bg-cardHover border border-gray-700 text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5">
+                        <button onclick="exportData()" class="bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5">
                             <i class="fa-solid fa-download text-accent"></i> Verileri Dışa Aktar (JSON)
                         </button>
-                        <label class="bg-cardBg hover:bg-cardHover border border-gray-700 text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5">
+                        <label class="bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5">
                             <i class="fa-solid fa-upload text-neonGreen"></i> Verileri İçe Aktar
                             <input type="file" id="importFile" accept=".json" onchange="importData(event)" class="hidden">
                         </label>
                     </div>
                 </div>
 
-                <!-- Sıfırlama -->
-                <div class="pt-2 border-t border-gray-800/80 flex items-center justify-between">
+                <div class="pt-2 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-between">
                     <div>
-                        <span class="text-gray-300 font-semibold block">Fabrika Ayarları</span>
+                        <span class="text-gray-700 dark:text-gray-300 font-semibold block">Fabrika Ayarları</span>
                         <span class="text-[10px] text-gray-500">Tüm akışı ve vizyon kartlarını temizler.</span>
                     </div>
-                    <button onclick="resetData()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer font-medium">
+                    <button onclick="resetData()" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 dark:text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer font-medium">
                         Sıfırla
                     </button>
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-800">
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100 dark:border-gray-800">
                 <button onclick="saveSettingsModal()" class="px-5 py-2.5 rounded-xl bg-accent hover:bg-accentHover text-white font-bold transition-all cursor-pointer text-xs shadow-md shadow-accent/20">
                     Değişiklikleri Kaydet
                 </button>
@@ -280,6 +329,26 @@
         document.getElementById('currentDateString').innerText = new Date().toLocaleDateString('tr-TR', options);
 
         let userProfile = JSON.parse(localStorage.getItem('nexus_user_profile')) || { name: 'CoreOS', badge: 'PRO' };
+        let currentTheme = localStorage.getItem('nexus_theme') || 'dark';
+
+        function applyTheme() {
+            const root = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            if (currentTheme === 'light') {
+                root.classList.remove('dark');
+                themeIcon.className = "fa-solid fa-sun text-neonAmber";
+            } else {
+                root.classList.add('dark');
+                themeIcon.className = "fa-solid fa-moon text-accent";
+            }
+        }
+        applyTheme();
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('nexus_theme', currentTheme);
+            applyTheme();
+        }
         
         const todayStr = new Date().toISOString().slice(0, 10);
         let streamItems = JSON.parse(localStorage.getItem('nexus_stream_items')) || [
@@ -296,6 +365,7 @@
         let currentFilter = 'all';
         let calendarDate = new Date();
         let selectedStreamDate = new Date().toISOString().slice(0, 10);
+        let modalActiveDate = '';
 
         function applyProfileUI() {
             document.getElementById('appTitleDisplay').innerHTML = `${escapeHtml(userProfile.name)} <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="userBadgeLabel">${escapeHtml(userProfile.badge)}</span>`;
@@ -318,20 +388,16 @@
                 const btnM = document.getElementById(`nav-${v}-m`);
                 if (btn) {
                     if (v === view) {
-                        btn.classList.add('bg-accent', 'text-white', 'shadow-sm');
-                        btn.classList.remove('text-gray-400');
+                        btn.className = "px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all cursor-pointer shadow-sm";
                     } else {
-                        btn.classList.remove('bg-accent', 'text-white', 'shadow-sm');
-                        btn.classList.add('text-gray-400');
+                        btn.className = "px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1";
                     }
                 }
                 if (btnM) {
                     if (v === view) {
-                        btnM.classList.add('bg-accent', 'text-white', 'font-medium');
-                        btnM.classList.remove('text-gray-400');
+                        btnM.className = "flex-1 py-1.5 rounded-lg bg-accent text-white font-medium text-center";
                     } else {
-                        btnM.classList.remove('bg-accent', 'text-white', 'font-medium');
-                        btnM.classList.add('text-gray-400');
+                        btnM.className = "flex-1 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 text-center";
                     }
                 }
             });
@@ -387,6 +453,94 @@
             input.value = '';
             saveAndRender();
             input.focus();
+        }
+
+        // --- TAKVİM GÜNÜ TIKLANDIĞINDA AÇILAN PENCERE FONKSİYONLARI ---
+        function openCalendarDayModal(dateStr) {
+            modalActiveDate = dateStr;
+            const modal = document.getElementById('calendarDayModal');
+            const titleEl = document.getElementById('calModalTitle');
+            const subtitleEl = document.getElementById('calModalSubtitle');
+            
+            const formattedDate = new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+            titleEl.innerText = formattedDate;
+            subtitleEl.innerText = `${dateStr} tarihli etkinlikler ve komuta merkezi`;
+
+            renderCalendarDayModalItems();
+            modal.classList.remove('hidden');
+        }
+
+        function closeCalendarDayModal() {
+            document.getElementById('calendarDayModal').classList.add('hidden');
+        }
+
+        function renderCalendarDayModalItems() {
+            const listContainer = document.getElementById('calModalItemsList');
+            const dayItems = streamItems.filter(i => i.dueDate && i.dueDate.startsWith(modalActiveDate));
+
+            if (dayItems.length === 0) {
+                listContainer.innerHTML = `<p class="text-xs text-gray-400 italic py-2 text-center">Bu güne ait kayıt bulunmuyor.</p>`;
+                return;
+            }
+
+            let html = '';
+            dayItems.forEach(item => {
+                const timeStr = item.dueDate ? item.dueDate.split('T')[1] || '' : '';
+                let typeBadge = 'Fikir';
+                let badgeClass = 'text-accent bg-accent/10';
+                if(item.type === 'task') { typeBadge = 'Görev'; badgeClass = 'text-neonGreen bg-neonGreen/10'; }
+                else if(item.type === 'goal') { typeBadge = 'Hedef'; badgeClass = 'text-neonAmber bg-neonAmber/10'; }
+                else if(item.type === 'reminder') { typeBadge = 'Hatırlatıcı'; badgeClass = 'text-neonPurple bg-neonPurple/10'; }
+
+                html += `
+                    <div class="flex items-center justify-between bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl p-2.5 text-xs">
+                        <div class="flex items-center gap-2.5 flex-1 min-w-0">
+                            <button onclick="toggleComplete('${item.id}'); renderCalendarDayModalItems();" class="w-5 h-5 rounded border ${item.completed ? 'bg-neonGreen border-neonGreen text-white' : 'border-gray-400'} flex items-center justify-center shrink-0 cursor-pointer">
+                                ${item.completed ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+                            </button>
+                            <div class="flex flex-col truncate">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[9px] px-1.5 py-0.5 rounded ${badgeClass} font-medium">${typeBadge}</span>
+                                    ${timeStr ? `<span class="text-[10px] text-gray-400 font-mono">${timeStr}</span>` : ''}
+                                </div>
+                                <span class="text-gray-800 dark:text-gray-200 truncate ${item.completed ? 'line-through text-gray-400' : ''}">${escapeHtml(item.content)}</span>
+                            </div>
+                        </div>
+                        <button onclick="deleteItem('${item.id}'); renderCalendarDayModalItems();" class="text-gray-400 hover:text-red-500 p-1 cursor-pointer"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        function addQuickItemFromCalendar() {
+            const contentInput = document.getElementById('calQuickContent');
+            const timeInput = document.getElementById('calQuickTime');
+            const typeSelect = document.getElementById('calQuickType');
+
+            const text = contentInput.value.trim();
+            if (!text) return;
+
+            const timeValue = timeInput.value || '09:00';
+
+            streamItems.unshift({
+                id: Date.now().toString(),
+                content: text,
+                type: typeSelect.value,
+                completed: false,
+                dueDate: `${modalActiveDate}T${timeValue}`,
+                timestamp: new Date().toISOString()
+            });
+
+            contentInput.value = '';
+            saveAndRender();
+            renderCalendarDayModalItems();
+        }
+
+        function jumpToStreamFromModal() {
+            selectedStreamDate = modalActiveDate;
+            closeCalendarDayModal();
+            switchMainView('stream');
         }
 
         function openModal(id = null, defaultDate = '') {
@@ -563,90 +717,125 @@
 
         function setFilter(filter) {
             currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-accent', 'text-white');
-                btn.classList.add('bg-cardBg', 'text-gray-400');
+            ['all', 'idea', 'task', 'goal', 'reminder'].forEach(f => {
+                const btn = document.getElementById(`filter-${f}`);
+                if (btn) {
+                    if (f === filter) {
+                        btn.className = "filter-btn px-4 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap";
+                    } else {
+                        btn.className = "filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent";
+                    }
+                }
             });
-            const activeBtn = document.getElementById(`filter-${filter}`);
-            if(activeBtn) {
-                activeBtn.classList.remove('bg-cardBg', 'text-gray-400');
-                activeBtn.classList.add('bg-accent', 'text-white');
-            }
             render();
         }
 
-        function changeMonth(direction) {
+        function changeCalendarMonth(direction) {
             calendarDate.setMonth(calendarDate.getMonth() + direction);
             render();
         }
 
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
         function render() {
+            const todayDateStr = new Date().toISOString().slice(0, 10);
+            const dateLabelEl = document.getElementById('activeDateLabel');
+            const resetBtnEl = document.getElementById('todayResetBtn');
+
+            if (selectedStreamDate === todayDateStr) {
+                dateLabelEl.innerText = "Bugün (" + new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'short' }) + ")";
+                resetBtnEl.classList.add('hidden');
+            } else {
+                dateLabelEl.innerText = new Date(selectedStreamDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long', year: 'numeric' });
+                resetBtnEl.classList.remove('hidden');
+            }
+
+            const totalCount = streamItems.length;
+            const completedCount = streamItems.filter(i => i.completed).length;
+            const pendingCount = totalCount - completedCount;
+            const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+            document.getElementById('completionRate').innerText = `%${percent} Tamamlandı`;
+            document.getElementById('activeTaskCount').innerText = `${totalCount} Öğe`;
+            document.getElementById('ideaCount').innerText = `${streamItems.filter(i => i.type === 'idea').length} Fikir`;
+
+            document.getElementById('badgeCompletedCount').innerText = completedCount;
+            document.getElementById('badgePendingCount').innerText = pendingCount;
+
             const container = document.getElementById('mainContainer');
-
-            const totalTasks = streamItems.filter(i => i.type === 'task' || i.type === 'goal').length;
-            const completedTasks = streamItems.filter(i => (i.type === 'task' || i.type === 'goal') && i.completed).length;
-            const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-            
-            // Seçili günün istatistikleri (Motivasyon rozetleri için)
-            const currentDayFilteredItems = streamItems.filter(item => {
-                const itemDateOnly = item.dueDate ? item.dueDate.slice(0, 10) : '';
-                return itemDateOnly === selectedStreamDate;
-            });
-            const dayCompletedCount = currentDayFilteredItems.filter(i => i.completed).length;
-            const dayPendingCount = currentDayFilteredItems.length - dayCompletedCount;
-
-            if(document.getElementById('completionRate')) {
-                document.getElementById('completionRate').innerText = `%${completionPercentage} Tamamlandı`;
-                document.getElementById('activeTaskCount').innerText = `${totalTasks - completedTasks} Aktif`;
-                document.getElementById('ideaCount').innerText = `${streamItems.filter(i => i.type === 'idea').length} Fikir`;
-            }
-
-            if(document.getElementById('badgeCompletedCount')) {
-                document.getElementById('badgeCompletedCount').innerText = dayCompletedCount;
-                document.getElementById('badgePendingCount').innerText = dayPendingCount;
-            }
+            container.innerHTML = '';
 
             if (currentView === 'stream') {
-                const todayFormatted = new Date().toISOString().slice(0, 10);
-                const dateObj = new Date(selectedStreamDate + 'T00:00:00');
-                const optionsHeader = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-                let dateLabelText = dateObj.toLocaleDateString('tr-TR', optionsHeader);
-
-                if (selectedStreamDate === todayFormatted) {
-                    dateLabelText = `Bugün (${dateLabelText})`;
-                    document.getElementById('todayResetBtn').classList.add('hidden');
-                } else {
-                    document.getElementById('todayResetBtn').classList.remove('hidden');
+                let filtered = streamItems.filter(i => i.dueDate && i.dueDate.startsWith(selectedStreamDate));
+                if (currentFilter !== 'all') {
+                    filtered = filtered.filter(i => i.type === currentFilter);
                 }
-                document.getElementById('activeDateLabel').innerText = dateLabelText;
-
-                let filtered = streamItems.filter(item => {
-                    const itemDateOnly = item.dueDate ? item.dueDate.slice(0, 10) : '';
-                    const matchesDate = itemDateOnly === selectedStreamDate;
-                    const matchesType = currentFilter === 'all' || item.type === currentFilter;
-                    return matchesDate && matchesType;
-                });
-
-                filtered.sort((a, b) => {
-                    const timeA = a.dueDate && a.dueDate.includes('T') ? a.dueDate.split('T')[1] : '00:00';
-                    const timeB = b.dueDate && b.dueDate.includes('T') ? b.dueDate.split('T')[1] : '00:00';
-                    return timeA.localeCompare(timeB);
-                });
 
                 if (filtered.length === 0) {
                     container.innerHTML = `
-                        <div class="text-center py-16 bg-cardBg/40 border border-gray-800/50 rounded-2xl text-gray-500 flex flex-col items-center gap-3">
-                            <i class="fa-solid fa-water text-4xl opacity-40"></i>
-                            <p class="text-sm">Bu gün için henüz kayıtlı akış öğesi yok. Yukarıdan ekleyebilirsin.</p>
-                            <button onclick="openModal(null, '${selectedStreamDate}')" class="text-xs bg-accent/20 text-accent hover:bg-accent hover:text-white px-3 py-1.5 rounded-xl transition-all cursor-pointer font-medium">
-                                <i class="fa-solid fa-plus mr-1"></i> Bu Güne Etkinlik Ekle
-                            </button>
-                        </div>`;
+                        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-8 text-center flex flex-col items-center justify-center gap-3 shadow-sm">
+                            <div class="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-400 text-xl">
+                                <i class="fa-solid fa-feather"></i>
+                            </div>
+                            <h3 class="font-bold text-gray-700 dark:text-gray-300 text-sm">Bu gün için henüz bir akış öğesi yok</h3>
+                            <p class="text-xs text-gray-500 max-w-sm">Yukarıdaki hızlı yakalama çubuğunu kullanarak zihnini boşaltabilir, görev veya fikir ekleyebilirsin.</p>
+                        </div>
+                    `;
                     return;
                 }
-                container.innerHTML = filtered.map(item => renderItemCard(item)).join('');
-            } 
-            else if (currentView === 'calendar') {
+
+                filtered.forEach(item => {
+                    let badgeColor = 'bg-accent/10 text-accent border-accent/20';
+                    let icon = 'fa-solid fa-lightbulb';
+                    let typeName = 'Fikir';
+
+                    if (item.type === 'task') {
+                        badgeColor = 'bg-neonGreen/10 text-neonGreen border-neonGreen/20';
+                        icon = 'fa-solid fa-check';
+                        typeName = 'Görev';
+                    } else if (item.type === 'goal') {
+                        badgeColor = 'bg-neonAmber/10 text-neonAmber border-neonAmber/20';
+                        icon = 'fa-solid fa-bullseye';
+                        typeName = 'Hedef';
+                    } else if (item.type === 'reminder') {
+                        badgeColor = 'bg-neonPurple/10 text-neonPurple border-neonPurple/20';
+                        icon = 'fa-solid fa-bell';
+                        typeName = 'Hatırlatıcı';
+                    }
+
+                    const timeStr = item.dueDate ? item.dueDate.split('T')[1] || '' : '';
+
+                    const card = document.createElement('div');
+                    card.className = `bg-white dark:bg-cardBg border ${item.completed ? 'border-gray-200 dark:border-gray-800/50 opacity-60' : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'} rounded-2xl p-4 flex items-center justify-between gap-4 transition-all group shadow-sm`;
+                    
+                    card.innerHTML = `
+                        <div class="flex items-center gap-3.5 flex-1 min-w-0">
+                            <button onclick="toggleComplete('${item.id}')" class="w-6 h-6 rounded-lg border ${item.completed ? 'bg-neonGreen border-neonGreen text-white' : 'border-gray-300 dark:border-gray-700 hover:border-accent'} flex items-center justify-center transition-all cursor-pointer shrink-0">
+                                ${item.completed ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                            </button>
+                            <div class="flex flex-col gap-1 min-w-0 flex-1">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md border ${badgeColor} font-medium flex items-center gap-1"><i class="${icon}"></i> ${typeName}</span>
+                                    ${timeStr ? `<span class="text-[10px] text-gray-500 font-mono"><i class="fa-regular fa-clock mr-1"></i>${timeStr}</span>` : ''}
+                                </div>
+                                <p class="text-sm text-gray-800 dark:text-gray-200 font-medium break-words ${item.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}">${escapeHtml(item.content)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                            <button onclick="openModal('${item.id}')" class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer" title="Düzenle">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                            <button onclick="deleteItem('${item.id}')" class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-inputBg hover:bg-red-500/20 text-gray-500 dark:text-gray-400 hover:text-red-400 flex items-center justify-center transition-all cursor-pointer" title="Sil">
+                                <i class="fa-solid fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } else if (currentView === 'calendar') {
                 const year = calendarDate.getFullYear();
                 const month = calendarDate.getMonth();
                 const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
@@ -655,156 +844,105 @@
                 const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
                 const totalDays = new Date(year, month + 1, 0).getDate();
 
-                let daysHtml = '';
+                let calendarHTML = `
+                    <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
+                        <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
+                            <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
+                                <i class="fa-solid fa-calendar-days text-accent"></i> ${monthNames[month]} ${year}
+                            </h3>
+                            <div class="flex items-center gap-1">
+                                <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                <button onclick="changeCalendarMonth(1)" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-gray-400 pb-2">
+                            <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2">
+                `;
+
                 for (let i = 0; i < adjustedFirstDay; i++) {
-                    daysHtml += `<div class="bg-inputBg/30 rounded-xl min-h-[110px] border border-gray-800/30 opacity-20"></div>`;
+                    calendarHTML += `<div class="min-h-[90px] bg-gray-50/50 dark:bg-inputBg/30 rounded-xl border border-gray-100 dark:border-gray-800/40 opacity-30"></div>`;
                 }
 
-                for (let d = 1; d <= totalDays; d++) {
-                    const formattedD = String(d).padStart(2, '0');
-                    const formattedM = String(month + 1).padStart(2, '0');
-                    const dateString = `${year}-${formattedM}-${formattedD}`;
-                    
-                    let dayEvents = streamItems.filter(i => i.dueDate && i.dueDate.startsWith(dateString));
-                    dayEvents.sort((a, b) => {
-                        const tA = a.dueDate && a.dueDate.includes('T') ? a.dueDate.split('T')[1] : '00:00';
-                        const tB = b.dueDate && b.dueDate.includes('T') ? b.dueDate.split('T')[1] : '00:00';
-                        return tA.localeCompare(tB);
+                for (let day = 1; day <= totalDays; day++) {
+                    const dStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const dayItems = streamItems.filter(i => i.dueDate && i.dueDate.startsWith(dStr));
+                    const isToday = dStr === todayDateStr;
+
+                    // Hücre içinde içerikleri listeleme
+                    let itemsPreviewHTML = '';
+                    dayItems.slice(0, 2).forEach(item => {
+                        let dotColor = 'bg-accent';
+                        if (item.type === 'task') dotColor = 'bg-neonGreen';
+                        else if (item.type === 'goal') dotColor = 'bg-neonAmber';
+                        else if (item.type === 'reminder') dotColor = 'bg-neonPurple';
+
+                        itemsPreviewHTML += `
+                            <div class="flex items-center gap-1 text-[10px] text-gray-600 dark:text-gray-300 truncate w-full">
+                                <span class="w-1.5 h-1.5 rounded-full ${dotColor} shrink-0"></span>
+                                <span class="truncate ${item.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}">${escapeHtml(item.content)}</span>
+                            </div>
+                        `;
                     });
 
-                    const isToday = dateString === new Date().toISOString().slice(0, 10);
+                    if (dayItems.length > 2) {
+                        itemsPreviewHTML += `<span class="text-[9px] text-accent font-medium">+${dayItems.length - 2} daha</span>`;
+                    }
 
-                    daysHtml += `
-                        <div class="bg-inputBg/80 rounded-xl p-2 min-h-[120px] border ${isToday ? 'border-accent shadow-lg shadow-accent/10' : 'border-gray-800/70'} flex flex-col justify-between group/day">
-                            <div>
-                                <div class="flex items-center justify-between mb-1">
-                                    <span class="text-xs font-bold ${isToday ? 'bg-accent text-white px-1.5 py-0.5 rounded-md' : 'text-gray-400'}">${d}</span>
-                                    <button onclick="openModal(null, '${dateString}')" class="text-[10px] text-gray-500 hover:text-accent opacity-0 group-hover/day:opacity-100 transition-all cursor-pointer" title="Bu güne etkinlik ekle"><i class="fa-solid fa-plus"></i></button>
-                                </div>
-                                <div class="flex flex-col gap-1 max-h-[80px] overflow-y-auto">
-                                    ${dayEvents.map(ev => `
-                                        <div class="group/item flex items-center justify-between text-[10px] bg-cardBg p-1 rounded border border-gray-700/60 ${ev.completed ? 'opacity-50' : ''}">
-                                            <span onclick="toggleComplete('${ev.id}')" class="truncate cursor-pointer flex-1 ${ev.completed ? 'line-through text-gray-500' : 'text-gray-200'}">
-                                                <i class="fa-solid fa-circle text-[5px] mr-1 ${ev.type === 'task' ? 'text-neonGreen' : ev.type === 'goal' ? 'text-accent' : 'text-neonAmber'}"></i>${escapeHtml(ev.content)}
-                                            </span>
-                                            <div class="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                                                <button onclick="openModal('${ev.id}')" class="text-gray-400 hover:text-white cursor-pointer"><i class="fa-solid fa-pen text-[9px]"></i></button>
-                                                <button onclick="deleteItem('${ev.id}')" class="text-red-400 hover:text-red-300 cursor-pointer"><i class="fa-solid fa-trash text-[9px]"></i></button>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
+                    calendarHTML += `
+                        <div onclick="openCalendarDayModal('${dStr}')" class="min-h-[90px] bg-gray-50 dark:bg-inputBg hover:bg-gray-100 dark:hover:bg-cardHover border ${isToday ? 'border-accent shadow-sm shadow-accent/25 ring-1 ring-accent' : 'border-gray-200 dark:border-gray-800'} rounded-xl p-2 flex flex-col justify-between transition-all cursor-pointer group relative overflow-hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold ${isToday ? 'text-accent' : 'text-gray-700 dark:text-gray-300'}">${day}</span>
+                                ${dayItems.length > 0 ? `<span class="text-[9px] bg-accent/10 text-accent font-semibold px-1.5 py-0.5 rounded-md">${dayItems.length}</span>` : ''}
+                            </div>
+                            <div class="flex flex-col gap-1 mt-1 overflow-hidden flex-1">
+                                ${itemsPreviewHTML}
                             </div>
                         </div>
                     `;
                 }
 
-                container.innerHTML = `
-                    <div class="bg-cardBg border border-gray-800 rounded-2xl p-5 shadow-lg flex flex-col gap-5">
-                        <div class="flex items-center justify-between pb-4 border-b border-gray-800">
-                            <div class="flex items-center gap-3">
-                                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                                    <i class="fa-solid fa-calendar-days text-accent"></i> ${monthNames[month]} ${year}
-                                </h2>
-                                <button onclick="openModal()" class="text-xs bg-accent hover:bg-accentHover text-white px-3 py-1.5 rounded-xl cursor-pointer font-semibold flex items-center gap-1">
-                                    <i class="fa-solid fa-plus"></i> Etkinlik Ekle
-                                </button>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="changeMonth(-1)" class="bg-inputBg hover:bg-gray-800 border border-gray-700 text-gray-300 w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-                                <button onclick="changeMonth(1)" class="bg-inputBg hover:bg-gray-800 border border-gray-700 text-gray-300 w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-gray-400 pb-2 border-b border-gray-800/50">
-                            <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
-                        </div>
-                        <div class="grid grid-cols-7 gap-2">
-                            ${daysHtml}
+                calendarHTML += `</div></div>`;
+                container.innerHTML = calendarHTML;
+
+            } else if (currentView === 'vision') {
+                let visionHTML = `
+                    <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
+                        <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
+                            <i class="fa-solid fa-mountain-sun text-neonAmber"></i> Vizyon ve İlham Panosu
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Zihnini canlı tutacak vizyon kartları ekle.</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <input type="text" id="visionTitle" placeholder="Vizyon Başlığı" class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
+                            <input type="text" id="visionImg" placeholder="Görsel URL (Unsplash vb.)" class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
+                            <input type="text" id="visionQuote" placeholder="Motto / Özlü Söz" class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-800 dark:text-gray-200 outline-none focus:border-accent sm:col-span-2">
+                            <button onclick="addVisionItem()" class="bg-accent hover:bg-accentHover text-white font-bold py-2 rounded-xl transition-all cursor-pointer text-xs sm:col-span-2 shadow-md shadow-accent/20">Vizyon Kartı Ekle</button>
                         </div>
                     </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 `;
-            }
-            else if (currentView === 'vision') {
-                container.innerHTML = `
-                    <div class="flex flex-col gap-6">
-                        <div class="bg-cardBg border border-gray-800 rounded-2xl p-5 shadow-lg flex flex-col gap-4">
-                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-mountain-sun text-neonAmber"></i> Yeni Vizyon / Hedef Kartı Ekle
-                            </h2>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <input type="text" id="visionTitle" placeholder="Hedef Başlığı (Örn: Liderlik)" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 outline-none focus:border-accent">
-                                <input type="text" id="visionImg" placeholder="Görsel URL (İsteğe bağlı link)" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 outline-none focus:border-accent">
-                                <input type="text" id="visionQuote" placeholder="Motive Edici Slogan" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 outline-none focus:border-accent">
+
+                visionItems.forEach(v => {
+                    visionHTML += `
+                        <div class="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 group h-48 flex flex-col justify-end p-4 shadow-lg">
+                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('${escapeHtml(v.imageUrl)}')"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/60 to-transparent"></div>
+                            <div class="relative z-10 flex flex-col gap-1">
+                                <h4 class="font-bold text-white text-sm">${escapeHtml(v.title)}</h4>
+                                <p class="text-[11px] text-gray-300 italic">"${escapeHtml(v.quote)}"</p>
                             </div>
-                            <button onclick="addVisionItem()" class="bg-neonAmber hover:bg-amber-600 text-gray-950 font-bold px-4 py-2 rounded-xl text-xs transition-all cursor-pointer self-end flex items-center gap-1.5">
-                                <i class="fa-solid fa-plus"></i> Panoya Ekle
+                            <button onclick="deleteVisionItem('${v.id}')" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-xl bg-darkBg/80 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all cursor-pointer opacity-0 group-hover:opacity-100">
+                                <i class="fa-solid fa-trash text-xs"></i>
                             </button>
                         </div>
+                    `;
+                });
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            ${visionItems.map(v => `
-                                <div class="bg-cardBg border border-gray-800 rounded-2xl overflow-hidden shadow-lg group relative flex flex-col justify-between">
-                                    <div class="h-48 overflow-hidden relative">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-cardBg via-transparent to-transparent z-10"></div>
-                                        <img src="${v.imageUrl}" alt="${v.title}" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
-                                        <button onclick="deleteVisionItem('${v.id}')" class="absolute top-3 right-3 z-20 bg-darkBg/80 text-gray-400 hover:text-red-400 w-8 h-8 rounded-full flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer">
-                                            <i class="fa-solid fa-trash-can text-xs"></i>
-                                        </button>
-                                    </div>
-                                    <div class="p-4 flex flex-col gap-1.5 z-20 -mt-8">
-                                        <h3 class="font-bold text-base text-white">${escapeHtml(v.title)}</h3>
-                                        <p class="text-xs text-gray-400 italic">"${escapeHtml(v.quote)}"</p>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
+                visionHTML += `</div>`;
+                container.innerHTML = visionHTML;
             }
-        }
-
-        function renderItemCard(item) {
-            let typeLabel = 'FİKİR';
-            let badgeColor = 'text-neonAmber bg-neonAmber/10 border-neonAmber/20';
-
-            if (item.type === 'task') { typeLabel = 'GÖREV'; badgeColor = 'text-neonGreen bg-neonGreen/10 border-neonGreen/20'; }
-            else if (item.type === 'goal') { typeLabel = 'HEDEF'; badgeColor = 'text-accent bg-accent/10 border-accent/20'; }
-            else if (item.type === 'reminder') { typeLabel = 'HATIRLATICI'; badgeColor = 'text-neonPurple bg-neonPurple/10 border-neonPurple/20'; }
-
-            let timeStr = '';
-            if(item.dueDate && item.dueDate.includes('T')) {
-                const timePart = item.dueDate.split('T')[1];
-                if(timePart) timeStr = `<span class="text-[11px] bg-inputBg text-gray-300 border border-gray-800 px-2.5 py-1 rounded-lg flex items-center gap-1.5"><i class="fa-regular fa-clock text-accent"></i> ${timePart}</span>`;
-            }
-
-            return `
-                <div class="bg-cardBg border ${item.completed ? 'border-gray-800/40 opacity-60' : 'border-gray-800/80 hover:border-gray-700'} rounded-2xl p-4 flex items-start justify-between gap-4 transition-all shadow-sm group">
-                    <div class="flex items-start gap-3.5 flex-1">
-                        <button onclick="toggleComplete('${item.id}')" class="mt-1 text-gray-600 hover:text-neonGreen transition-colors cursor-pointer">
-                            <i class="fa-solid ${item.completed ? 'fa-square-check text-neonGreen text-xl' : 'fa-square text-xl'}"></i>
-                        </button>
-                        <div class="flex flex-col gap-2 flex-1">
-                            <p class="text-gray-100 text-base leading-relaxed ${item.completed ? 'line-through text-gray-500' : ''}">${escapeHtml(item.content)}</p>
-                            <div class="flex flex-wrap items-center gap-2.5">
-                                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${badgeColor}">${typeLabel}</span>
-                                ${timeStr}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onclick="openModal('${item.id}')" class="text-gray-500 hover:text-white p-2 transition-colors cursor-pointer" title="Düzenle">
-                            <i class="fa-solid fa-pen text-xs"></i>
-                        </button>
-                        <button onclick="deleteItem('${item.id}')" class="text-gray-500 hover:text-red-400 p-2 transition-colors cursor-pointer" title="Sil">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
         }
 
         render();
