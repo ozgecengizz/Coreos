@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreOS - Sosyal Yaşam Akışı & Komuta Merkezi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b0f19',
+                        cardBg: '#131c2e',
+                        cardHover: '#1a2640',
+                        inputBg: '#0f172a',
+                        accent: '#6366f1',
+                        accentHover: '#4f46e5',
+                        neonGreen: '#10b981',
+                        neonAmber: '#f59e0b',
+                        neonPurple: '#8b5cf6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkBg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-white">
+
+    <!-- Üst Komuta Merkezi Navigasyonu -->
+    <header class="bg-[#0f172a]/85 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 px-6 py-3.5">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div id="appLogoIcon" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent to-indigo-400 flex items-center justify-center shadow-lg shadow-accent/20">
+                    <i class="fa-solid fa-bolt text-white text-sm"></i>
+                </div>
+                <div>
+                    <h1 id="appTitleDisplay" class="font-bold text-base tracking-tight text-white flex items-center gap-2">
+                        CoreOS <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="userBadgeLabel">PRO</span>
+                    </h1>
+                    <p class="text-xs text-gray-400" id="currentDateString">Bugün</p>
+                </div>
+            </div>
+
+            <!-- Sağ: Görünüm Değiştirici & Profil Butonu -->
+            <div class="flex items-center gap-2">
+                <div class="hidden sm:flex items-center bg-inputBg p-1 rounded-xl border border-gray-800 text-xs gap-1">
+                    <button onclick="switchMainView('stream')" id="nav-stream" class="px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all cursor-pointer shadow-sm">Akış</button>
+                    <button onclick="switchMainView('calendar')" id="nav-calendar" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-calendar-days text-accent"></i> Takvim</button>
+                    <button onclick="switchMainView('vision')" id="nav-vision" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-mountain-sun text-neonAmber"></i> Vizyon</button>
+                </div>
+                
+                <!-- Kişiselleştirme & Paylaşım Menüsü Butonu -->
+                <button onclick="openSettingsModal()" class="bg-inputBg hover:bg-gray-800 border border-gray-800 text-gray-300 px-3 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer" title="Profili Kişiselleştir & Paylaş">
+                    <i class="fa-solid fa-sliders text-accent"></i>
+                    <span class="hidden md:inline" id="profileNameBtn">Profil</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobil Görünüm Sekme Barı -->
+        <div class="flex sm:hidden items-center justify-center bg-inputBg p-1 rounded-xl border border-gray-800 text-xs gap-1 mt-3">
+            <button onclick="switchMainView('stream')" id="nav-stream-m" class="flex-1 py-1.5 rounded-lg bg-accent text-white font-medium text-center">Akış</button>
+            <button onclick="switchMainView('calendar')" id="nav-calendar-m" class="flex-1 py-1.5 rounded-lg text-gray-400 text-center">Takvim</button>
+            <button onclick="switchMainView('vision')" id="nav-vision-m" class="flex-1 py-1.5 rounded-lg text-gray-400 text-center">Vizyon</button>
+        </div>
+    </header>
+
+    <!-- Ana İçerik Ekranı -->
+    <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+        
+        <!-- Özet Kartları (Sadece Akışta Aktif) -->
+        <section id="statsSection" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-cardBg border border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-accent/5 rounded-full blur-xl"></div>
+                <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-lg">
+                    <i class="fa-solid fa-fire-flame-curved"></i>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-400 font-medium">Akış Enerjisi</span>
+                    <h2 class="text-xl font-bold text-white" id="completionRate">%0 Tamamlandı</h2>
+                </div>
+            </div>
+
+            <div class="bg-cardBg border border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-neonGreen/5 rounded-full blur-xl"></div>
+                <div class="w-12 h-12 rounded-xl bg-neonGreen/10 border border-neonGreen/20 flex items-center justify-center text-neonGreen text-lg">
+                    <i class="fa-solid fa-check-double"></i>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-400 font-medium">Aktif Görevler</span>
+                    <h2 class="text-xl font-bold text-white" id="activeTaskCount">0 Görev</h2>
+                </div>
+            </div>
+
+            <div class="bg-cardBg border border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group">
+                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-neonAmber/5 rounded-full blur-xl"></div>
+                <div class="w-12 h-12 rounded-xl bg-neonAmber/10 border border-neonAmber/20 flex items-center justify-center text-neonAmber text-lg">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-400 font-medium">Yakalanan Fikirler</span>
+                    <h2 class="text-xl font-bold text-white" id="ideaCount">0 Fikir</h2>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tarih Gezinti ve Sürtünmesiz Hızlı Yakalama Çubuğu (Sadece Akışta Aktif) -->
+        <section id="captureSection" class="bg-cardBg border border-accent/40 shadow-lg shadow-accent/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-3 relative transition-all">
+            <!-- Tarih Navigasyon Şeridi (İki yanda mini oklar) -->
+            <div class="flex items-center justify-between bg-inputBg/80 px-3 py-2 rounded-xl border border-gray-800 text-xs">
+                <button onclick="changeStreamDate(-1)" class="w-8 h-8 rounded-lg bg-cardBg hover:bg-cardHover border border-gray-700/80 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105" title="Dünün Akışı">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <div class="flex items-center gap-2 font-semibold text-gray-200">
+                    <i class="fa-solid fa-calendar-day text-accent"></i>
+                    <span id="activeDateLabel">Bugün</span>
+                    <button id="todayResetBtn" onclick="resetToToday()" class="hidden text-[10px] bg-accent/20 text-accent px-2 py-0.5 rounded-md hover:bg-accent hover:text-white transition-all cursor-pointer">Bugüne Dön</button>
+                </div>
+                <button onclick="changeStreamDate(1)" class="w-8 h-8 rounded-lg bg-cardBg hover:bg-cardHover border border-gray-700/80 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105" title="Yarının Akışı">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="text-accent pl-2">
+                    <i class="fa-solid fa-pen-nib"></i>
+                </div>
+                <input type="text" id="streamInput" autofocus
+                    class="flex-1 bg-transparent border-none outline-none text-gray-100 placeholder-gray-500 text-base"
+                    placeholder="Seçili güne zihnini boşalt: Fikir, görev veya plan yaz..."
+                    onkeydown="handleKeyDown(event)">
+            </div>
+            
+            <div class="flex flex-wrap items-center justify-between pt-2 border-t border-gray-800/60 gap-2 text-xs">
+                <div class="flex items-center gap-2 text-gray-400">
+                    <span class="text-[11px]"><i class="fa-solid fa-circle-info mr-1 text-accent"></i> Yazılan öğeler doğrudan seçili güne işlenir.</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <!-- Saat Seçici -->
+                    <input type="time" id="streamTime" value="09:00" class="bg-inputBg text-gray-300 border border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer hover:border-gray-700 transition-all" title="Etkinlik Saati">
+                    
+                    <select id="streamType" class="bg-inputBg text-gray-300 border border-gray-800 rounded-xl px-3 py-1.5 outline-none text-xs font-medium cursor-pointer hover:border-gray-700 transition-all">
+                        <option value="idea">💡 Fikir / Not</option>
+                        <option value="task">✅ Görev</option>
+                        <option value="reminder">⏰ Hatırlatıcı</option>
+                        <option value="goal">🎯 Hedef</option>
+                    </select>
+                    <button onclick="addStreamItem()" 
+                        class="bg-accent hover:bg-accentHover text-white px-4 py-1.5 rounded-xl transition-all font-semibold flex items-center gap-1.5 shadow-md shadow-accent/20 cursor-pointer">
+                        <span>Fırlat</span>
+                        <i class="fa-solid fa-arrow-up-right text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filtre Sekmeleri ve Motivasyon Sayaç Rozetleri (Sadece Akışta Aktif) -->
+        <section id="filterSection" class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-800 pb-3 gap-3">
+            <div class="flex gap-2 overflow-x-auto text-xs font-medium w-full sm:w-auto">
+                <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-4 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap">Tüm Akış</button>
+                <button onclick="setFilter('idea')" id="filter-idea" class="filter-btn px-4 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Fikirler</button>
+                <button onclick="setFilter('task')" id="filter-task" class="filter-btn px-4 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Görevler</button>
+                <button onclick="setFilter('goal')" id="filter-goal" class="filter-btn px-4 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hedefler</button>
+                <button onclick="setFilter('reminder')" id="filter-reminder" class="filter-btn px-4 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hatırlatıcılar</button>
+            </div>
+            
+            <!-- Motivasyon Odaklı Küçük Sayaç / Durum Rozetleri -->
+            <div class="flex items-center gap-2 text-xs">
+                <div class="bg-inputBg border border-gray-800 rounded-xl px-3 py-1.5 flex items-center gap-2 text-gray-300" title="Bugünkü Tamamlanan ve Yapılacak İş Durumu">
+                    <span class="flex items-center gap-1 text-neonGreen font-semibold"><i class="fa-solid fa-circle-check text-[10px]"></i> <span id="badgeCompletedCount">0</span> Bitti</span>
+                    <span class="text-gray-600">|</span>
+                    <span class="flex items-center gap-1 text-neonAmber font-semibold"><i class="fa-solid fa-clock text-[10px]"></i> <span id="badgePendingCount">0</span> Bekliyor</span>
+                </div>
+                <button onclick="clearCompleted()" class="text-gray-500 hover:text-red-400 transition-colors p-2 rounded-xl bg-inputBg border border-gray-800 cursor-pointer" title="Tamamlananları Temizle">
+                    <i class="fa-solid fa-broom text-xs"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Ana Konteyner -->
+        <div id="mainContainer" class="flex flex-col gap-3 pb-12">
+            <!-- Dinamik olarak dolacak -->
+        </div>
+
+    </main>
+
+    <!-- Etkinlik Ekleme / Düzenleme Modalı -->
+    <div id="itemModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                <h3 id="modalTitle" class="font-bold text-white text-base">Etkinlik Düzenle</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <input type="hidden" id="modalItemId">
+            <div class="flex flex-col gap-3 text-xs">
+                <div>
+                    <label class="text-gray-400 block mb-1">İçerik / Başlık</label>
+                    <input type="text" id="modalContent" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-gray-400 block mb-1">Tür</label>
+                        <select id="modalType" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent">
+                            <option value="task">Görev</option>
+                            <option value="reminder">Hatırlatıcı</option>
+                            <option value="goal">Hedef</option>
+                            <option value="idea">Fikir</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-gray-400 block mb-1">Tarih & Saat</label>
+                        <input type="datetime-local" id="modalDate" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent">
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-800">
+                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-inputBg text-gray-300 hover:bg-gray-800 transition-all cursor-pointer text-xs">İptal</button>
+                <button onclick="saveModalItem()" class="px-4 py-2 rounded-xl bg-accent hover:bg-accentHover text-white font-bold transition-all cursor-pointer text-xs">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profil, Kişiselleştirme & Paylaşım Modalı -->
+    <div id="settingsModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                <h3 class="font-bold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-accent"></i> Kişisel Alanı Yapılandır & Paylaş
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <div class="flex flex-col gap-4 text-xs">
+                <!-- Profil Kimliği -->
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-gray-300 font-semibold">Uygulama / Profil Adı</label>
+                    <input type="text" id="settingsAppName" placeholder="Örn: CoreOS" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 outline-none focus:border-accent text-xs">
+                    <span class="text-[10px] text-gray-500">Bu araç tamamen size özeldir. Verileriniz tarayıcınızda (localStorage) güvenle saklanır.</span>
+                </div>
+
+                <!-- Veri İçe/Dışa Aktarım (Paylaşım ve Yedekleme) -->
+                <div class="bg-inputBg/50 border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+                    <h4 class="font-bold text-gray-200 flex items-center gap-1.5"><i class="fa-solid fa-share-nodes text-accent"></i> Veri Yedekleme ve Taşıma</h4>
+                    <p class="text-[11px] text-gray-400">Verilerinizi başka bir cihaza aktarabilir veya başkalarıyla paylaşmak için JSON formatında dışa/içe aktarabilirsiniz.</p>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <button onclick="exportData()" class="bg-cardBg hover:bg-cardHover border border-gray-700 text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5">
+                            <i class="fa-solid fa-download text-accent"></i> Verileri Dışa Aktar (JSON)
+                        </button>
+                        <label class="bg-cardBg hover:bg-cardHover border border-gray-700 text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5">
+                            <i class="fa-solid fa-upload text-neonGreen"></i> Verileri İçe Aktar
+                            <input type="file" id="importFile" accept=".json" onchange="importData(event)" class="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sıfırlama -->
+                <div class="pt-2 border-t border-gray-800/80 flex items-center justify-between">
+                    <div>
+                        <span class="text-gray-300 font-semibold block">Fabrika Ayarları</span>
+                        <span class="text-[10px] text-gray-500">Tüm akışı ve vizyon kartlarını temizler.</span>
+                    </div>
+                    <button onclick="resetData()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer font-medium">
+                        Sıfırla
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-800">
+                <button onclick="saveSettingsModal()" class="px-5 py-2.5 rounded-xl bg-accent hover:bg-accentHover text-white font-bold transition-all cursor-pointer text-xs shadow-md shadow-accent/20">
+                    Değişiklikleri Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript - Motor -->
+    <script>
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDateString').innerText = new Date().toLocaleDateString('tr-TR', options);
+
+        let userProfile = JSON.parse(localStorage.getItem('nexus_user_profile')) || { name: 'CoreOS', badge: 'PRO' };
+        
+        const todayStr = new Date().toISOString().slice(0, 10);
+        let streamItems = JSON.parse(localStorage.getItem('nexus_stream_items')) || [
+            { id: '1', content: 'Q3 bütçe planlaması için yöneticilerle mini toplantı', type: 'task', completed: false, dueDate: `${todayStr}T10:00`, timestamp: new Date(Date.now() - 7200000).toISOString() },
+            { id: '2', content: 'Mobil uygulama arayüzü için yeni konsept tasarımı', type: 'idea', completed: false, dueDate: `${todayStr}T14:30`, timestamp: new Date(Date.now() - 18000000).toISOString() },
+            { id: '3', content: 'Haftalık kişisel liderlik hedeflerini gözden geçir', type: 'goal', completed: true, dueDate: `${todayStr}T17:00`, timestamp: new Date(Date.now() - 36000000).toISOString() }
+        ];
+
+        let visionItems = JSON.parse(localStorage.getItem('nexus_vision_items')) || [
+            { id: 'v1', title: 'Odak ve Kararlılık', imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format&fit=crop&q=80', quote: 'Vizyon, görünmeyeni görebilme sanatıdır.' }
+        ];
+
+        let currentView = 'stream';
+        let currentFilter = 'all';
+        let calendarDate = new Date();
+        let selectedStreamDate = new Date().toISOString().slice(0, 10);
+
+        function applyProfileUI() {
+            document.getElementById('appTitleDisplay').innerHTML = `${escapeHtml(userProfile.name)} <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="userBadgeLabel">${escapeHtml(userProfile.badge)}</span>`;
+            document.getElementById('profileNameBtn').innerText = userProfile.name.split(' ')[0] || 'Profil';
+        }
+        applyProfileUI();
+
+        function saveAndRender() {
+            localStorage.setItem('nexus_stream_items', JSON.stringify(streamItems));
+            localStorage.setItem('nexus_vision_items', JSON.stringify(visionItems));
+            localStorage.setItem('nexus_user_profile', JSON.stringify(userProfile));
+            applyProfileUI();
+            render();
+        }
+
+        function switchMainView(view) {
+            currentView = view;
+            ['stream', 'calendar', 'vision'].forEach(v => {
+                const btn = document.getElementById(`nav-${v}`);
+                const btnM = document.getElementById(`nav-${v}-m`);
+                if (btn) {
+                    if (v === view) {
+                        btn.classList.add('bg-accent', 'text-white', 'shadow-sm');
+                        btn.classList.remove('text-gray-400');
+                    } else {
+                        btn.classList.remove('bg-accent', 'text-white', 'shadow-sm');
+                        btn.classList.add('text-gray-400');
+                    }
+                }
+                if (btnM) {
+                    if (v === view) {
+                        btnM.classList.add('bg-accent', 'text-white', 'font-medium');
+                        btnM.classList.remove('text-gray-400');
+                    } else {
+                        btnM.classList.remove('bg-accent', 'text-white', 'font-medium');
+                        btnM.classList.add('text-gray-400');
+                    }
+                }
+            });
+
+            const stats = document.getElementById('statsSection');
+            const capture = document.getElementById('captureSection');
+            const filter = document.getElementById('filterSection');
+
+            if (view === 'stream') {
+                stats.style.display = 'grid';
+                capture.style.display = 'flex';
+                filter.style.display = 'flex';
+            } else {
+                stats.style.display = 'none';
+                capture.style.display = 'none';
+                filter.style.display = 'none';
+            }
+
+            render();
+        }
+
+        function changeStreamDate(direction) {
+            const curr = new Date(selectedStreamDate);
+            curr.setDate(curr.getDate() + direction);
+            selectedStreamDate = curr.toISOString().slice(0, 10);
+            render();
+        }
+
+        function resetToToday() {
+            selectedStreamDate = new Date().toISOString().slice(0, 10);
+            render();
+        }
+
+        function addStreamItem() {
+            const input = document.getElementById('streamInput');
+            const typeSelect = document.getElementById('streamType');
+            const timeInput = document.getElementById('streamTime');
+            
+            const text = input.value.trim();
+            if (!text) return;
+
+            const timeValue = timeInput.value || '09:00';
+
+            streamItems.unshift({
+                id: Date.now().toString(),
+                content: text,
+                type: typeSelect.value,
+                completed: false,
+                dueDate: `${selectedStreamDate}T${timeValue}`,
+                timestamp: new Date().toISOString()
+            });
+
+            input.value = '';
+            saveAndRender();
+            input.focus();
+        }
+
+        function openModal(id = null, defaultDate = '') {
+            const modal = document.getElementById('itemModal');
+            const titleEl = document.getElementById('modalTitle');
+            const idEl = document.getElementById('modalItemId');
+            const contentEl = document.getElementById('modalContent');
+            const typeEl = document.getElementById('modalType');
+            const dateEl = document.getElementById('modalDate');
+
+            modal.classList.remove('hidden');
+
+            if (id) {
+                const item = streamItems.find(i => i.id === id);
+                if (item) {
+                    titleEl.innerText = 'Etkinliği / Görevi Düzenle';
+                    idEl.value = item.id;
+                    contentEl.value = item.content;
+                    typeEl.value = item.type;
+                    dateEl.value = item.dueDate;
+                }
+            } else {
+                titleEl.innerText = 'Yeni Etkinlik Ekle';
+                idEl.value = '';
+                contentEl.value = '';
+                typeEl.value = 'task';
+                dateEl.value = defaultDate ? `${defaultDate}T09:00` : `${selectedStreamDate}T09:00`;
+            }
+            contentEl.focus();
+        }
+
+        function closeModal() {
+            document.getElementById('itemModal').classList.add('hidden');
+        }
+
+        function saveModalItem() {
+            const id = document.getElementById('modalItemId').value;
+            const content = document.getElementById('modalContent').value.trim();
+            const type = document.getElementById('modalType').value;
+            const dueDate = document.getElementById('modalDate').value;
+
+            if (!content) return;
+
+            if (id) {
+                const item = streamItems.find(i => i.id === id);
+                if (item) {
+                    item.content = content;
+                    item.type = type;
+                    item.dueDate = dueDate;
+                }
+            } else {
+                streamItems.unshift({
+                    id: Date.now().toString(),
+                    content: content,
+                    type: type,
+                    completed: false,
+                    dueDate: dueDate,
+                    timestamp: new Date().toISOString()
+                });
+            }
+
+            closeModal();
+            saveAndRender();
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settingsAppName').value = userProfile.name;
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        function saveSettingsModal() {
+            const nameInput = document.getElementById('settingsAppName').value.trim();
+            if (nameInput) {
+                userProfile.name = nameInput;
+            }
+            closeSettingsModal();
+            saveAndRender();
+        }
+
+        function exportData() {
+            const dataObj = {
+                profile: userProfile,
+                streamItems: streamItems,
+                visionItems: visionItems
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataObj, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `coreos_backup_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0], "UTF-8");
+                fileReader.onload = function(e) {
+                    try {
+                        const parsed = JSON.parse(e.target.result);
+                        if (parsed.streamItems) streamItems = parsed.streamItems;
+                        if (parsed.visionItems) visionItems = parsed.visionItems;
+                        if (parsed.profile) userProfile = parsed.profile;
+                        saveAndRender();
+                        closeSettingsModal();
+                        alert("Veriler başarıyla yüklendi!");
+                    } catch (err) {
+                        alert("Dosya okunurken hata oluştu. Geçerli bir JSON yedek dosyası seçtiğinizden emin olun.");
+                    }
+                }
+            }
+        }
+
+        function resetData() {
+            if (confirm("Tüm verileriniz sıfırlanacak. Emin misiniz?")) {
+                localStorage.removeItem('nexus_stream_items');
+                localStorage.removeItem('nexus_vision_items');
+                localStorage.removeItem('nexus_user_profile');
+                location.reload();
+            }
+        }
+
+        function addVisionItem() {
+            const titleInput = document.getElementById('visionTitle');
+            const imgInput = document.getElementById('visionImg');
+            const quoteInput = document.getElementById('visionQuote');
+
+            if (!titleInput.value.trim()) return;
+
+            visionItems.unshift({
+                id: Date.now().toString(),
+                title: titleInput.value.trim(),
+                imageUrl: imgInput.value.trim() || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=80',
+                quote: quoteInput.value.trim() || 'Hedefe odaklan.'
+            });
+
+            titleInput.value = '';
+            imgInput.value = '';
+            quoteInput.value = '';
+            saveAndRender();
+        }
+
+        function deleteVisionItem(id) {
+            visionItems = visionItems.filter(i => i.id !== id);
+            saveAndRender();
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') addStreamItem();
+        }
+
+        function toggleComplete(id) {
+            const item = streamItems.find(i => i.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                saveAndRender();
+            }
+        }
+
+        function deleteItem(id) {
+            streamItems = streamItems.filter(i => i.id !== id);
+            saveAndRender();
+        }
+
+        function clearCompleted() {
+            streamItems = streamItems.filter(i => !i.completed);
+            saveAndRender();
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-accent', 'text-white');
+                btn.classList.add('bg-cardBg', 'text-gray-400');
+            });
+            const activeBtn = document.getElementById(`filter-${filter}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-cardBg', 'text-gray-400');
+                activeBtn.classList.add('bg-accent', 'text-white');
+            }
+            render();
+        }
+
+        function changeMonth(direction) {
+            calendarDate.setMonth(calendarDate.getMonth() + direction);
+            render();
+        }
+
+        function render() {
+            const container = document.getElementById('mainContainer');
+
+            const totalTasks = streamItems.filter(i => i.type === 'task' || i.type === 'goal').length;
+            const completedTasks = streamItems.filter(i => (i.type === 'task' || i.type === 'goal') && i.completed).length;
+            const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            // Seçili günün istatistikleri (Motivasyon rozetleri için)
+            const currentDayFilteredItems = streamItems.filter(item => {
+                const itemDateOnly = item.dueDate ? item.dueDate.slice(0, 10) : '';
+                return itemDateOnly === selectedStreamDate;
+            });
+            const dayCompletedCount = currentDayFilteredItems.filter(i => i.completed).length;
+            const dayPendingCount = currentDayFilteredItems.length - dayCompletedCount;
+
+            if(document.getElementById('completionRate')) {
+                document.getElementById('completionRate').innerText = `%${completionPercentage} Tamamlandı`;
+                document.getElementById('activeTaskCount').innerText = `${totalTasks - completedTasks} Aktif`;
+                document.getElementById('ideaCount').innerText = `${streamItems.filter(i => i.type === 'idea').length} Fikir`;
+            }
+
+            if(document.getElementById('badgeCompletedCount')) {
+                document.getElementById('badgeCompletedCount').innerText = dayCompletedCount;
+                document.getElementById('badgePendingCount').innerText = dayPendingCount;
+            }
+
+            if (currentView === 'stream') {
+                const todayFormatted = new Date().toISOString().slice(0, 10);
+                const dateObj = new Date(selectedStreamDate + 'T00:00:00');
+                const optionsHeader = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                let dateLabelText = dateObj.toLocaleDateString('tr-TR', optionsHeader);
+
+                if (selectedStreamDate === todayFormatted) {
+                    dateLabelText = `Bugün (${dateLabelText})`;
+                    document.getElementById('todayResetBtn').classList.add('hidden');
+                } else {
+                    document.getElementById('todayResetBtn').classList.remove('hidden');
+                }
+                document.getElementById('activeDateLabel').innerText = dateLabelText;
+
+                let filtered = streamItems.filter(item => {
+                    const itemDateOnly = item.dueDate ? item.dueDate.slice(0, 10) : '';
+                    const matchesDate = itemDateOnly === selectedStreamDate;
+                    const matchesType = currentFilter === 'all' || item.type === currentFilter;
+                    return matchesDate && matchesType;
+                });
+
+                filtered.sort((a, b) => {
+                    const timeA = a.dueDate && a.dueDate.includes('T') ? a.dueDate.split('T')[1] : '00:00';
+                    const timeB = b.dueDate && b.dueDate.includes('T') ? b.dueDate.split('T')[1] : '00:00';
+                    return timeA.localeCompare(timeB);
+                });
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-16 bg-cardBg/40 border border-gray-800/50 rounded-2xl text-gray-500 flex flex-col items-center gap-3">
+                            <i class="fa-solid fa-water text-4xl opacity-40"></i>
+                            <p class="text-sm">Bu gün için henüz kayıtlı akış öğesi yok. Yukarıdan ekleyebilirsin.</p>
+                            <button onclick="openModal(null, '${selectedStreamDate}')" class="text-xs bg-accent/20 text-accent hover:bg-accent hover:text-white px-3 py-1.5 rounded-xl transition-all cursor-pointer font-medium">
+                                <i class="fa-solid fa-plus mr-1"></i> Bu Güne Etkinlik Ekle
+                            </button>
+                        </div>`;
+                    return;
+                }
+                container.innerHTML = filtered.map(item => renderItemCard(item)).join('');
+            } 
+            else if (currentView === 'calendar') {
+                const year = calendarDate.getFullYear();
+                const month = calendarDate.getMonth();
+                const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+                
+                const firstDayIndex = new Date(year, month, 1).getDay();
+                const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+                const totalDays = new Date(year, month + 1, 0).getDate();
+
+                let daysHtml = '';
+                for (let i = 0; i < adjustedFirstDay; i++) {
+                    daysHtml += `<div class="bg-inputBg/30 rounded-xl min-h-[110px] border border-gray-800/30 opacity-20"></div>`;
+                }
+
+                for (let d = 1; d <= totalDays; d++) {
+                    const formattedD = String(d).padStart(2, '0');
+                    const formattedM = String(month + 1).padStart(2, '0');
+                    const dateString = `${year}-${formattedM}-${formattedD}`;
+                    
+                    let dayEvents = streamItems.filter(i => i.dueDate && i.dueDate.startsWith(dateString));
+                    dayEvents.sort((a, b) => {
+                        const tA = a.dueDate && a.dueDate.includes('T') ? a.dueDate.split('T')[1] : '00:00';
+                        const tB = b.dueDate && b.dueDate.includes('T') ? b.dueDate.split('T')[1] : '00:00';
+                        return tA.localeCompare(tB);
+                    });
+
+                    const isToday = dateString === new Date().toISOString().slice(0, 10);
+
+                    daysHtml += `
+                        <div class="bg-inputBg/80 rounded-xl p-2 min-h-[120px] border ${isToday ? 'border-accent shadow-lg shadow-accent/10' : 'border-gray-800/70'} flex flex-col justify-between group/day">
+                            <div>
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-bold ${isToday ? 'bg-accent text-white px-1.5 py-0.5 rounded-md' : 'text-gray-400'}">${d}</span>
+                                    <button onclick="openModal(null, '${dateString}')" class="text-[10px] text-gray-500 hover:text-accent opacity-0 group-hover/day:opacity-100 transition-all cursor-pointer" title="Bu güne etkinlik ekle"><i class="fa-solid fa-plus"></i></button>
+                                </div>
+                                <div class="flex flex-col gap-1 max-h-[80px] overflow-y-auto">
+                                    ${dayEvents.map(ev => `
+                                        <div class="group/item flex items-center justify-between text-[10px] bg-cardBg p-1 rounded border border-gray-700/60 ${ev.completed ? 'opacity-50' : ''}">
+                                            <span onclick="toggleComplete('${ev.id}')" class="truncate cursor-pointer flex-1 ${ev.completed ? 'line-through text-gray-500' : 'text-gray-200'}">
+                                                <i class="fa-solid fa-circle text-[5px] mr-1 ${ev.type === 'task' ? 'text-neonGreen' : ev.type === 'goal' ? 'text-accent' : 'text-neonAmber'}"></i>${escapeHtml(ev.content)}
+                                            </span>
+                                            <div class="flex items-center gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                                                <button onclick="openModal('${ev.id}')" class="text-gray-400 hover:text-white cursor-pointer"><i class="fa-solid fa-pen text-[9px]"></i></button>
+                                                <button onclick="deleteItem('${ev.id}')" class="text-red-400 hover:text-red-300 cursor-pointer"><i class="fa-solid fa-trash text-[9px]"></i></button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = `
+                    <div class="bg-cardBg border border-gray-800 rounded-2xl p-5 shadow-lg flex flex-col gap-5">
+                        <div class="flex items-center justify-between pb-4 border-b border-gray-800">
+                            <div class="flex items-center gap-3">
+                                <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-calendar-days text-accent"></i> ${monthNames[month]} ${year}
+                                </h2>
+                                <button onclick="openModal()" class="text-xs bg-accent hover:bg-accentHover text-white px-3 py-1.5 rounded-xl cursor-pointer font-semibold flex items-center gap-1">
+                                    <i class="fa-solid fa-plus"></i> Etkinlik Ekle
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="changeMonth(-1)" class="bg-inputBg hover:bg-gray-800 border border-gray-700 text-gray-300 w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                                <button onclick="changeMonth(1)" class="bg-inputBg hover:bg-gray-800 border border-gray-700 text-gray-300 w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-gray-400 pb-2 border-b border-gray-800/50">
+                            <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2">
+                            ${daysHtml}
+                        </div>
+                    </div>
+                `;
+            }
+            else if (currentView === 'vision') {
+                container.innerHTML = `
+                    <div class="flex flex-col gap-6">
+                        <div class="bg-cardBg border border-gray-800 rounded-2xl p-5 shadow-lg flex flex-col gap-4">
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-mountain-sun text-neonAmber"></i> Yeni Vizyon / Hedef Kartı Ekle
+                            </h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <input type="text" id="visionTitle" placeholder="Hedef Başlığı (Örn: Liderlik)" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 outline-none focus:border-accent">
+                                <input type="text" id="visionImg" placeholder="Görsel URL (İsteğe bağlı link)" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 outline-none focus:border-accent">
+                                <input type="text" id="visionQuote" placeholder="Motive Edici Slogan" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-200 outline-none focus:border-accent">
+                            </div>
+                            <button onclick="addVisionItem()" class="bg-neonAmber hover:bg-amber-600 text-gray-950 font-bold px-4 py-2 rounded-xl text-xs transition-all cursor-pointer self-end flex items-center gap-1.5">
+                                <i class="fa-solid fa-plus"></i> Panoya Ekle
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            ${visionItems.map(v => `
+                                <div class="bg-cardBg border border-gray-800 rounded-2xl overflow-hidden shadow-lg group relative flex flex-col justify-between">
+                                    <div class="h-48 overflow-hidden relative">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-cardBg via-transparent to-transparent z-10"></div>
+                                        <img src="${v.imageUrl}" alt="${v.title}" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-500">
+                                        <button onclick="deleteVisionItem('${v.id}')" class="absolute top-3 right-3 z-20 bg-darkBg/80 text-gray-400 hover:text-red-400 w-8 h-8 rounded-full flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 cursor-pointer">
+                                            <i class="fa-solid fa-trash-can text-xs"></i>
+                                        </button>
+                                    </div>
+                                    <div class="p-4 flex flex-col gap-1.5 z-20 -mt-8">
+                                        <h3 class="font-bold text-base text-white">${escapeHtml(v.title)}</h3>
+                                        <p class="text-xs text-gray-400 italic">"${escapeHtml(v.quote)}"</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderItemCard(item) {
+            let typeLabel = 'FİKİR';
+            let badgeColor = 'text-neonAmber bg-neonAmber/10 border-neonAmber/20';
+
+            if (item.type === 'task') { typeLabel = 'GÖREV'; badgeColor = 'text-neonGreen bg-neonGreen/10 border-neonGreen/20'; }
+            else if (item.type === 'goal') { typeLabel = 'HEDEF'; badgeColor = 'text-accent bg-accent/10 border-accent/20'; }
+            else if (item.type === 'reminder') { typeLabel = 'HATIRLATICI'; badgeColor = 'text-neonPurple bg-neonPurple/10 border-neonPurple/20'; }
+
+            let timeStr = '';
+            if(item.dueDate && item.dueDate.includes('T')) {
+                const timePart = item.dueDate.split('T')[1];
+                if(timePart) timeStr = `<span class="text-[11px] bg-inputBg text-gray-300 border border-gray-800 px-2.5 py-1 rounded-lg flex items-center gap-1.5"><i class="fa-regular fa-clock text-accent"></i> ${timePart}</span>`;
+            }
+
+            return `
+                <div class="bg-cardBg border ${item.completed ? 'border-gray-800/40 opacity-60' : 'border-gray-800/80 hover:border-gray-700'} rounded-2xl p-4 flex items-start justify-between gap-4 transition-all shadow-sm group">
+                    <div class="flex items-start gap-3.5 flex-1">
+                        <button onclick="toggleComplete('${item.id}')" class="mt-1 text-gray-600 hover:text-neonGreen transition-colors cursor-pointer">
+                            <i class="fa-solid ${item.completed ? 'fa-square-check text-neonGreen text-xl' : 'fa-square text-xl'}"></i>
+                        </button>
+                        <div class="flex flex-col gap-2 flex-1">
+                            <p class="text-gray-100 text-base leading-relaxed ${item.completed ? 'line-through text-gray-500' : ''}">${escapeHtml(item.content)}</p>
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${badgeColor}">${typeLabel}</span>
+                                ${timeStr}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onclick="openModal('${item.id}')" class="text-gray-500 hover:text-white p-2 transition-colors cursor-pointer" title="Düzenle">
+                            <i class="fa-solid fa-pen text-xs"></i>
+                        </button>
+                        <button onclick="deleteItem('${item.id}')" class="text-gray-500 hover:text-red-400 p-2 transition-colors cursor-pointer" title="Sil">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        render();
+    </script>
+</body>
+</html>
