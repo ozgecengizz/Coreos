@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoreOS - Sosyal Yaşam Akışı & Komuta Merkezi</title>
+    <title>CoreOS - Gelişmiş Komuta Merkezi & Zihin Akışı</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -21,167 +21,184 @@
                         neonGreen: '#10b981',
                         neonAmber: '#f59e0b',
                         neonPurple: '#8b5cf6',
-                        
-                        lightBg: '#f8fafc',
-                        lightCard: '#ffffff',
-                        lightCardHover: '#f1f5f9',
-                        lightInput: '#f8fafc',
-                        lightText: '#1e293b'
+                        neonRed: '#ef4444',
                     }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-darkBg dark:bg-darkBg text-gray-100 dark:text-gray-100 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-white transition-colors duration-300" id="bodyRoot">
+<body class="bg-darkBg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-white transition-colors duration-300" id="bodyRoot">
 
     <!-- Üst Komuta Merkezi Navigasyonu -->
-    <header class="bg-[#0f172a]/85 dark:bg-[#0f172a]/85 bg-white/85 backdrop-blur-md border-b border-gray-800 dark:border-gray-800 border-gray-200 sticky top-0 z-50 px-6 py-3.5 transition-colors duration-300">
-        <div class="max-w-4xl mx-auto flex items-center justify-between">
+    <header class="bg-[#0f172a]/85 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 px-4 sm:px-6 py-3.5">
+        <div class="max-w-5xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div id="appLogoIcon" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent to-indigo-400 flex items-center justify-center shadow-lg shadow-accent/20">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent to-indigo-400 flex items-center justify-center shadow-lg shadow-accent/20">
                     <i class="fa-solid fa-bolt text-white text-sm"></i>
                 </div>
                 <div>
-                    <h1 id="appTitleDisplay" class="font-bold text-base tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-                        CoreOS <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="userBadgeLabel">PRO</span>
+                    <h1 id="appTitleDisplay" class="font-bold text-base tracking-tight text-white flex items-center gap-2">
+                        CoreOS <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30">PRO</span>
                     </h1>
-                    <p class="text-xs text-gray-500 dark:text-gray-400" id="currentDateString">Bugün</p>
+                    <p class="text-xs text-gray-400 flex items-center gap-1">
+                        <span id="currentDateString">Bugün</span> 
+                        <span class="text-[10px] bg-gray-800 text-gray-400 px-1.5 py-0.2 rounded hidden sm:inline">Kısayol: Ctrl+K</span>
+                    </p>
                 </div>
             </div>
 
-            <!-- Sağ: Görünüm Değiştirici, Tema Butonu & Profil -->
+            <!-- Sağ: Görünüm Seçenekleri, Pomodoro & Ayarlar -->
             <div class="flex items-center gap-2">
-                <div class="hidden sm:flex items-center bg-gray-100 dark:bg-inputBg p-1 rounded-xl border border-gray-200 dark:border-gray-800 text-xs gap-1">
+                <!-- Pomodoro Hızlı Sayaç -->
+                <div id="pomodoroWidget" onclick="togglePomodoroModal()" class="hidden sm:flex items-center gap-2 bg-gray-800/80 border border-gray-700/80 px-3 py-1.5 rounded-xl text-xs cursor-pointer hover:border-accent transition-all text-gray-300">
+                    <i class="fa-solid fa-stopwatch text-accent animate-pulse"></i>
+                    <span id="pomodoroDisplay" class="font-mono font-bold">25:00</span>
+                </div>
+
+                <div class="hidden md:flex items-center bg-inputBg p-1 rounded-xl border border-gray-800 text-xs gap-1">
                     <button onclick="switchMainView('stream')" id="nav-stream" class="px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all cursor-pointer shadow-sm">Akış</button>
-                    <button onclick="switchMainView('calendar')" id="nav-calendar" class="px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-calendar-days text-accent"></i> Takvim</button>
-                    <button onclick="switchMainView('vision')" id="nav-vision" class="px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-mountain-sun text-neonAmber"></i> Vizyon</button>
+                    <button onclick="switchMainView('kanban')" id="nav-kanban" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-columns text-accent"></i> Akış Panosu</button>
+                    <button onclick="switchMainView('timeline')" id="nav-timeline" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-timeline text-accent"></i> Tünel</button>
+                    <button onclick="switchMainView('calendar')" id="nav-calendar" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-calendar-days text-accent"></i> Takvim</button>
+                    <button onclick="switchMainView('vision')" id="nav-vision" class="px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-mountain-sun text-neonAmber"></i> Vizyon</button>
                 </div>
                 
-                <!-- Tema Değiştirme Butonu -->
-                <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer text-xs" title="Tema Değiştir">
+                <button onclick="toggleTheme()" class="bg-inputBg hover:bg-gray-800 border border-gray-800 text-gray-300 w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer text-xs" title="Tema Değiştir">
                     <i id="themeIcon" class="fa-solid fa-moon text-accent"></i>
                 </button>
 
-                <!-- Kişiselleştirme & Paylaşım Menüsü Butonu -->
-                <button onclick="openSettingsModal()" class="bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer" title="Profili Kişiselleştir & Paylaş">
+                <button onclick="openSettingsModal()" class="bg-inputBg hover:bg-gray-800 border border-gray-800 text-gray-300 px-3 py-2 rounded-xl text-xs flex items-center gap-2 transition-all cursor-pointer">
                     <i class="fa-solid fa-sliders text-accent"></i>
-                    <span class="hidden md:inline" id="profileNameBtn">Profil</span>
+                    <span class="hidden sm:inline" id="profileNameBtn">Ayarlar</span>
                 </button>
             </div>
         </div>
         <!-- Mobil Görünüm Sekme Barı -->
-        <div class="flex sm:hidden items-center justify-center bg-gray-100 dark:bg-inputBg p-1 rounded-xl border border-gray-200 dark:border-gray-800 text-xs gap-1 mt-3">
-            <button onclick="switchMainView('stream')" id="nav-stream-m" class="flex-1 py-1.5 rounded-lg bg-accent text-white font-medium text-center">Akış</button>
-            <button onclick="switchMainView('calendar')" id="nav-calendar-m" class="flex-1 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 text-center">Takvim</button>
-            <button onclick="switchMainView('vision')" id="nav-vision-m" class="flex-1 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 text-center">Vizyon</button>
+        <div class="grid grid-cols-5 md:hidden bg-inputBg p-1 rounded-xl border border-gray-800 text-[10px] gap-1 mt-3 text-center font-medium">
+            <button onclick="switchMainView('stream')" id="nav-stream-m" class="py-1.5 rounded-lg bg-accent text-white">Akış</button>
+            <button onclick="switchMainView('kanban')" id="nav-kanban-m" class="py-1.5 rounded-lg text-gray-400">Pano</button>
+            <button onclick="switchMainView('timeline')" id="nav-timeline-m" class="py-1.5 rounded-lg text-gray-400">Tünel</button>
+            <button onclick="switchMainView('calendar')" id="nav-calendar-m" class="py-1.5 rounded-lg text-gray-400">Takvim</button>
+            <button onclick="switchMainView('vision')" id="nav-vision-m" class="py-1.5 rounded-lg text-gray-400">Vizyon</button>
         </div>
     </header>
 
     <!-- Ana İçerik Ekranı -->
-    <main class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
         
-        <!-- Özet Kartları (Sadece Akışta Aktif) -->
-        <section id="statsSection" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group shadow-sm">
-                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-accent/5 rounded-full blur-xl"></div>
-                <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-lg">
+        <!-- Özet Kartları ve Ruh Hali (Tıklanabilir İnteraktif Kartlar) -->
+        <section id="statsSection" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div onclick="filterByStat('completed')" class="bg-cardBg border border-gray-800/80 hover:border-accent/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-lg group-hover:scale-105 transition-transform">
                     <i class="fa-solid fa-fire-flame-curved"></i>
                 </div>
                 <div>
-                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Akış Enerjisi</span>
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="completionRate">%0 Tamamlandı</h2>
+                    <span class="text-xs text-gray-400 font-medium">Günlük Başarı <i class="fa-solid fa-arrow-pointer text-[10px] text-accent opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
+                    <h2 class="text-xl font-bold text-white" id="completionRate">%0 Tamamlandı</h2>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group shadow-sm">
-                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-neonGreen/5 rounded-full blur-xl"></div>
-                <div class="w-12 h-12 rounded-xl bg-neonGreen/10 border border-neonGreen/20 flex items-center justify-center text-neonGreen text-lg">
+            <div onclick="filterByStat('active')" class="bg-cardBg border border-gray-800/80 hover:border-neonGreen/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-neonGreen/10 border border-neonGreen/20 flex items-center justify-center text-neonGreen text-lg group-hover:scale-105 transition-transform">
                     <i class="fa-solid fa-check-double"></i>
                 </div>
                 <div>
-                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Aktif Görevler</span>
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="activeTaskCount">0 Görev</h2>
+                    <span class="text-xs text-gray-400 font-medium">Aktif Görevler <i class="fa-solid fa-arrow-pointer text-[10px] text-neonGreen opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
+                    <h2 class="text-xl font-bold text-white" id="activeTaskCount">0 Görev</h2>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden group shadow-sm">
-                <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-neonAmber/5 rounded-full blur-xl"></div>
-                <div class="w-12 h-12 rounded-xl bg-neonAmber/10 border border-neonAmber/20 flex items-center justify-center text-neonAmber text-lg">
+            <div onclick="filterByStat('idea')" class="bg-cardBg border border-gray-800/80 hover:border-neonAmber/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                <div class="w-12 h-12 rounded-xl bg-neonAmber/10 border border-neonAmber/20 flex items-center justify-center text-neonAmber text-lg group-hover:scale-105 transition-transform">
                     <i class="fa-solid fa-lightbulb"></i>
                 </div>
                 <div>
-                    <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Yakalanan Fikirler</span>
-                    <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="ideaCount">0 Fikir</h2>
+                    <span class="text-xs text-gray-400 font-medium">Yakalanan Fikirler <i class="fa-solid fa-arrow-pointer text-[10px] text-neonAmber opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
+                    <h2 class="text-xl font-bold text-white" id="ideaCount">0 Fikir</h2>
+                </div>
+            </div>
+
+            <!-- Ruh Hali / Enerji Widget'ı -->
+            <div class="bg-cardBg border border-gray-800/80 rounded-2xl p-4 flex flex-col justify-between shadow-sm">
+                <span class="text-xs text-gray-400 font-medium">Bugünkü Enerji / Mod</span>
+                <div class="flex items-center justify-between gap-1 mt-2">
+                    <button onclick="setMood('🔥')" class="text-lg p-1.5 rounded-xl hover:bg-gray-800 transition-all cursor-pointer" title="Çok Dinamik">🔥</button>
+                    <button onclick="setMood('⚡')" class="text-lg p-1.5 rounded-xl hover:bg-gray-800 transition-all cursor-pointer" title="Odaklı">⚡</button>
+                    <button onclick="setMood('💡')" class="text-lg p-1.5 rounded-xl hover:bg-gray-800 transition-all cursor-pointer" title="Yaratıcı">💡</button>
+                    <button onclick="setMood('☕')" class="text-lg p-1.5 rounded-xl hover:bg-gray-800 transition-all cursor-pointer" title="Sakin / Kahve">☕</button>
+                    <span id="currentMoodDisplay" class="text-xl pl-1">⚡</span>
                 </div>
             </div>
         </section>
 
-        <!-- Tarih Gezinti ve Hızlı Yakalama Çubuğu (Sadece Akışta Aktif) -->
-        <section id="captureSection" class="bg-white dark:bg-cardBg border border-accent/40 shadow-lg shadow-accent/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-3 relative transition-all">
-            <div class="flex items-center justify-between bg-gray-50 dark:bg-inputBg/80 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 text-xs">
-                <button onclick="changeStreamDate(-1)" class="w-8 h-8 rounded-lg bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700/80 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105" title="Dünün Akışı">
+        <!-- Tarih Gezinti ve Hızlı Girdi Çekmecesi (Quick Capture Bar) -->
+        <section id="captureSection" class="bg-cardBg border border-accent/40 shadow-lg shadow-accent/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-3 relative transition-all">
+            <div class="flex items-center justify-between bg-inputBg/80 px-3 py-2 rounded-xl border border-gray-800 text-xs">
+                <button onclick="changeStreamDate(-1)" class="w-8 h-8 rounded-lg bg-cardBg hover:bg-cardHover border border-gray-700 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm">
                     <i class="fa-solid fa-chevron-left text-xs"></i>
                 </button>
-                <div class="flex items-center gap-2 font-semibold text-gray-700 dark:text-gray-200">
+                <div class="flex items-center gap-2 font-semibold text-gray-200">
                     <i class="fa-solid fa-calendar-day text-accent"></i>
                     <span id="activeDateLabel">Bugün</span>
                     <button id="todayResetBtn" onclick="resetToToday()" class="hidden text-[10px] bg-accent/20 text-accent px-2 py-0.5 rounded-md hover:bg-accent hover:text-white transition-all cursor-pointer">Bugüne Dön</button>
                 </div>
-                <button onclick="changeStreamDate(1)" class="w-8 h-8 rounded-lg bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700/80 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105" title="Yarının Akışı">
+                <button onclick="changeStreamDate(1)" class="w-8 h-8 rounded-lg bg-cardBg hover:bg-cardHover border border-gray-700 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm">
                     <i class="fa-solid fa-chevron-right text-xs"></i>
                 </button>
             </div>
 
             <div class="flex items-center gap-3">
                 <div class="text-accent pl-2">
-                    <i class="fa-solid fa-pen-nib"></i>
+                    <i class="fa-solid fa-brain"></i>
                 </div>
                 <input type="text" id="streamInput" autofocus
-                    class="flex-1 bg-transparent border-none outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-base"
-                    placeholder="Seçili güne zihnini boşalt: Fikir, görev veya plan yaz..."
+                    class="flex-1 bg-transparent border-none outline-none text-gray-100 placeholder-gray-500 text-base"
+                    placeholder="Beyin Boşaltma (Brain Dump): Aklındakileri yaz, #etiket ekle ve Enter'a bas..."
                     onkeydown="handleKeyDown(event)">
             </div>
             
-            <div class="flex flex-wrap items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800/60 gap-2 text-xs">
-                <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                    <span class="text-[11px]"><i class="fa-solid fa-circle-info mr-1 text-accent"></i> Yazılan öğeler doğrudan seçili güne işlenir.</span>
+            <div class="flex flex-wrap items-center justify-between pt-2 border-t border-gray-800/60 gap-2 text-xs">
+                <div class="flex items-center gap-2 text-gray-400">
+                    <span class="text-[11px]"><i class="fa-solid fa-bolt mr-1 text-accent"></i> <b>Ctrl + K</b> ile her an hızlı giriş yapabilirsin.</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input type="time" id="streamTime" value="09:00" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-all" title="Etkinlik Saati">
+                    <input type="time" id="streamTime" value="09:00" class="bg-inputBg text-gray-300 border border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer">
                     
-                    <select id="streamType" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-1.5 outline-none text-xs font-medium cursor-pointer hover:border-gray-300 dark:hover:border-gray-700 transition-all">
-                        <option value="idea">💡 Fikir / Not</option>
+                    <select id="streamType" class="bg-inputBg text-gray-300 border border-gray-800 rounded-xl px-3 py-1.5 outline-none text-xs font-medium cursor-pointer">
+                        <option value="idea">💡 Fikir</option>
                         <option value="task">✅ Görev</option>
-                        <option value="reminder">⏰ Hatırlatıcı</option>
                         <option value="goal">🎯 Hedef</option>
+                        <option value="reminder">⏰ Hatırlatıcı</option>
+                        <option value="event">🤝 Randevu/Etkinlik</option>
                     </select>
                     <button onclick="addStreamItem()" 
                         class="bg-accent hover:bg-accentHover text-white px-4 py-1.5 rounded-xl transition-all font-semibold flex items-center gap-1.5 shadow-md shadow-accent/20 cursor-pointer">
-                        <span>Fırlat</span>
+                        <span>Kaydet</span>
                         <i class="fa-solid fa-arrow-up-right text-[10px]"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- Filtre Sekmeleri ve Motivasyon Sayaç Rozetleri (Sadece Akışta Aktif) -->
-        <section id="filterSection" class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
+        <!-- Filtre Sekmeleri ve Durum Bilgisi (Sadece Akışta Aktif) -->
+        <section id="filterSection" class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-800 pb-3 gap-3">
             <div class="flex gap-2 overflow-x-auto text-xs font-medium w-full sm:w-auto">
-                <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-4 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap">Tüm Akış</button>
-                <button onclick="setFilter('idea')" id="filter-idea" class="filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent">Fikirler</button>
-                <button onclick="setFilter('task')" id="filter-task" class="filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent">Görevler</button>
-                <button onclick="setFilter('goal')" id="filter-goal" class="filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent">Hedefler</button>
-                <button onclick="setFilter('reminder')" id="filter-reminder" class="filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent">Hatırlatıcılar</button>
+                <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-3.5 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap">Tümü</button>
+                <button onclick="setFilter('idea')" id="filter-idea" class="filter-btn px-3.5 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Fikirler</button>
+                <button onclick="setFilter('task')" id="filter-task" class="filter-btn px-3.5 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Görevler</button>
+                <button onclick="setFilter('goal')" id="filter-goal" class="filter-btn px-3.5 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hedefler</button>
+                <button onclick="setFilter('reminder')" id="filter-reminder" class="filter-btn px-3.5 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hatırlatıcılar</button>
+                <button onclick="setFilter('event')" id="filter-event" class="filter-btn px-3.5 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Randevular</button>
             </div>
             
             <div class="flex items-center gap-2 text-xs">
-                <div class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-1.5 flex items-center gap-2 text-gray-700 dark:text-gray-300 shadow-sm" title="Bugünkü Tamamlanan ve Yapılacak İş Durumu">
+                <div class="bg-inputBg border border-gray-800 rounded-xl px-3 py-1.5 flex items-center gap-2 text-gray-300 shadow-sm">
                     <span class="flex items-center gap-1 text-neonGreen font-semibold"><i class="fa-solid fa-circle-check text-[10px]"></i> <span id="badgeCompletedCount">0</span> Bitti</span>
-                    <span class="text-gray-300 dark:text-gray-600">|</span>
-                    <span class="flex items-center gap-1 text-neonAmber font-semibold"><i class="fa-solid fa-clock text-[10px]"></i> <span id="badgePendingCount">0</span> Bekliyor</span>
+                    <span class="text-gray-600">|</span>
+                    <span class="flex items-center gap-1 text-neonRed font-semibold"><i class="fa-solid fa-ban text-[10px]"></i> <span id="badgeAbandonedCount">0</span> Vazgeçilen</span>
                 </div>
-                <button onclick="clearCompleted()" class="text-gray-500 hover:text-red-500 transition-colors p-2 rounded-xl bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 cursor-pointer shadow-sm" title="Tamamlananları Temizle">
+                <button onclick="clearCompleted()" class="text-gray-400 hover:text-red-500 transition-colors p-2 rounded-xl bg-inputBg border border-gray-800 cursor-pointer shadow-sm" title="Tamamlananları Temizle">
                     <i class="fa-solid fa-broom text-xs"></i>
                 </button>
             </div>
@@ -189,146 +206,147 @@
 
         <!-- Ana Konteyner -->
         <div id="mainContainer" class="flex flex-col gap-3 pb-12">
-            <!-- Dinamik olarak dolacak -->
+            <!-- Dinamik dolacak -->
         </div>
 
     </main>
 
-    <!-- Takvim Gün Detay & Hızlı Ekleme Penceresi (Modal) -->
-    <div id="calendarDayModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl flex flex-col gap-4 max-h-[85vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
-                <div>
-                    <h3 id="calModalTitle" class="font-bold text-gray-900 dark:text-white text-base">Gün Özeti</h3>
-                    <p id="calModalSubtitle" class="text-xs text-gray-500">Seçilen günün etkinlikleri</p>
-                </div>
-                <button onclick="closeCalendarDayModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- Motivasyonel Pop-up Modalı (Süre Dolduğunda / Hatırlatıcıda Çıkar) -->
+    <div id="motivationModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-accent/60 rounded-3xl max-w-md w-full p-8 shadow-2xl shadow-accent/20 flex flex-col items-center text-center gap-6 relative overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div class="absolute -top-12 -left-12 w-32 h-32 bg-accent/20 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-neonGreen/20 rounded-full blur-2xl"></div>
+            
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-accent to-indigo-400 flex items-center justify-center text-white text-2xl shadow-lg shadow-accent/30 relative z-10">
+                <i id="popupIcon" class="fa-solid fa-bell"></i>
+            </div>
+            
+            <div class="flex flex-col gap-2 relative z-10">
+                <span id="popupSubtitle" class="text-xs uppercase tracking-widest text-accent font-bold">Süre Tamamlandı</span>
+                <h3 id="popupTitle" class="text-xl font-bold text-white">Harika bir odak seansı geride kaldı.</h3>
+                <p id="popupQuote" class="text-sm text-gray-300 mt-2 italic bg-inputBg/80 p-3.5 rounded-2xl border border-gray-800">
+                    "Zihnini dinlendir, bir sonraki hamle için hazırsın. Başarı, küçük adımların toplamıdır. ⚡"
+                </p>
             </div>
 
-            <!-- O güne ait öğelerin listesi -->
-            <div id="calModalItemsList" class="flex flex-col gap-2.5 max-h-56 overflow-y-auto pr-1">
-                <!-- Dinamik dolar -->
-            </div>
-
-            <!-- O güne hızlı öğe ekleme alanı -->
-            <div class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl p-3 flex flex-col gap-2.5 mt-2">
-                <span class="text-xs font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-1.5"><i class="fa-solid fa-plus text-accent"></i> Bu Güne Yeni Öğe Ekle</span>
-                <input type="text" id="calQuickContent" placeholder="Görev, fikir veya plan yazın..." class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
-                <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-2">
-                        <input type="time" id="calQuickTime" value="09:00" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 text-xs text-gray-700 dark:text-gray-300 outline-none">
-                        <select id="calQuickType" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 text-xs text-gray-700 dark:text-gray-300 outline-none">
-                            <option value="task">✅ Görev</option>
-                            <option value="idea">💡 Fikir</option>
-                            <option value="reminder">⏰ Hatırlatıcı</option>
-                            <option value="goal">🎯 Hedef</option>
-                        </select>
-                    </div>
-                    <button onclick="addQuickItemFromCalendar()" class="bg-accent hover:bg-accentHover text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shadow-sm">Ekle</button>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800">
-                <button onclick="jumpToStreamFromModal()" class="text-xs text-accent hover:underline font-medium cursor-pointer flex items-center gap-1">
-                    <i class="fa-solid fa-arrow-right"></i> Bu Günün Akışına Git
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full relative z-10 pt-2">
+                <button onclick="closeMotivationModal(true)" class="w-full sm:w-auto bg-neonGreen hover:bg-neonGreen/80 text-darkBg font-bold px-6 py-2.5 rounded-xl text-xs transition-all cursor-pointer shadow-md">
+                    Tamamlandı İşaretle
                 </button>
-                <button onclick="closeCalendarDayModal()" class="px-4 py-1.5 rounded-xl bg-gray-100 dark:bg-inputBg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all cursor-pointer text-xs">Kapat</button>
+                <button onclick="closeMotivationModal(false)" class="w-full sm:w-auto bg-gray-800 hover:bg-gray-700 text-gray-300 px-5 py-2.5 rounded-xl text-xs transition-all cursor-pointer">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pomodoro Sayaç Modalı -->
+    <div id="pomodoroModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-gray-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl flex flex-col items-center gap-5 text-center">
+            <h3 class="font-bold text-white text-base flex items-center gap-2">
+                <i class="fa-solid fa-stopwatch text-accent"></i> Pomodoro Odak Modu
+            </h3>
+            <div id="modalTimerDisplay" class="text-5xl font-mono font-bold text-accent tracking-wider py-4">25:00</div>
+            <div class="flex items-center justify-center gap-3 w-full">
+                <button id="pomoStartBtn" onclick="startPomodoro()" class="bg-neonGreen hover:bg-neonGreen/80 text-darkBg font-bold px-5 py-2 rounded-xl text-xs transition-all cursor-pointer">Başlat</button>
+                <button onclick="resetPomodoro()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-xl text-xs transition-all cursor-pointer">Sıfırla</button>
+                <button onclick="togglePomodoroModal()" class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded-xl text-xs transition-all cursor-pointer">Kapat</button>
             </div>
         </div>
     </div>
 
     <!-- Etkinlik Düzenleme Modalı -->
     <div id="itemModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
-                <h3 id="modalTitle" class="font-bold text-gray-900 dark:text-white text-base">Etkinlik Düzenle</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <div class="bg-cardBg border border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                <h3 class="font-bold text-white text-base">Etkinlik Düzenle</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <input type="hidden" id="modalItemId">
             <div class="flex flex-col gap-3 text-xs">
                 <div>
-                    <label class="text-gray-500 dark:text-gray-400 block mb-1">İçerik / Başlık</label>
-                    <input type="text" id="modalContent" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-800 dark:text-gray-200 outline-none focus:border-accent text-sm">
+                    <label class="text-gray-400 block mb-1">İçerik (Etiket ekleyebilirsiniz örn: #is)</label>
+                    <input type="text" id="modalContent" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent text-sm">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-gray-500 dark:text-gray-400 block mb-1">Tür</label>
-                        <select id="modalType" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
+                        <label class="text-gray-400 block mb-1">Tür</label>
+                        <select id="modalType" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent">
                             <option value="task">Görev</option>
                             <option value="reminder">Hatırlatıcı</option>
                             <option value="goal">Hedef</option>
                             <option value="idea">Fikir</option>
+                            <option value="event">Randevu/Etkinlik</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-gray-500 dark:text-gray-400 block mb-1">Tarih & Saat</label>
-                        <input type="datetime-local" id="modalDate" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
+                        <label class="text-gray-400 block mb-1">Tarih & Saat</label>
+                        <input type="datetime-local" id="modalDate" class="w-full bg-inputBg border border-gray-800 rounded-xl px-3 py-2 text-gray-200 outline-none focus:border-accent">
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100 dark:border-gray-800">
-                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-inputBg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all cursor-pointer text-xs">İptal</button>
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-800">
+                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-inputBg text-gray-300 hover:bg-gray-800 transition-all cursor-pointer text-xs">İptal</button>
                 <button onclick="saveModalItem()" class="px-4 py-2 rounded-xl bg-accent hover:bg-accentHover text-white font-bold transition-all cursor-pointer text-xs">Kaydet</button>
             </div>
         </div>
     </div>
 
-    <!-- Profil, Kişiselleştirme & Paylaşım Modalı -->
+    <!-- Ayarlar & Yedekleme Modalı -->
     <div id="settingsModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
-                <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-accent"></i> Kişisel Alanı Yapılandır & Paylaş
+        <div class="bg-cardBg border border-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                <h3 class="font-bold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-accent"></i> CoreOS Sistem Ayarları & Yedekleme
                 </h3>
-                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-700 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <div class="flex flex-col gap-4 text-xs">
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-gray-700 dark:text-gray-300 font-semibold">Uygulama / Profil Adı</label>
-                    <input type="text" id="settingsAppName" placeholder="Örn: CoreOS" class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2.5 text-gray-800 dark:text-gray-200 outline-none focus:border-accent text-xs">
-                    <span class="text-[10px] text-gray-500">Bu araç tamamen size özeldir. Verileriniz tarayıcınızda güvenle saklanır.</span>
+                    <label class="text-gray-300 font-semibold">Profil / Sistem Adı</label>
+                    <input type="text" id="settingsAppName" placeholder="CoreOS" class="bg-inputBg border border-gray-800 rounded-xl px-3 py-2.5 text-gray-200 outline-none focus:border-accent text-xs">
                 </div>
 
-                <div class="bg-gray-50 dark:bg-inputBg/50 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex flex-col gap-3">
-                    <h4 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5"><i class="fa-solid fa-share-nodes text-accent"></i> Veri Yedekleme ve Taşıma</h4>
-                    <p class="text-[11px] text-gray-500 dark:text-gray-400">Verilerinizi başka bir cihaza aktarabilir veya başkalarıyla paylaşmak için JSON formatında dışa/içe aktarabilirsiniz.</p>
+                <div class="bg-inputBg/50 border border-gray-800 rounded-xl p-4 flex flex-col gap-3">
+                    <h4 class="font-bold text-gray-200 flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-accent"></i> Yerel Veri Güvenliği & JSON Yedekleme</h4>
+                    <p class="text-[11px] text-gray-400">Verileriniz tarayıcınızda (localStorage) saklanır. Tek tuşla bilgisayarınıza yedekleyebilir veya başka bir cihaza taşıyabilirsiniz.</p>
                     <div class="flex flex-wrap gap-2 pt-1">
-                        <button onclick="exportData()" class="bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5">
-                            <i class="fa-solid fa-download text-accent"></i> Verileri Dışa Aktar (JSON)
+                        <button onclick="exportData()" class="bg-cardBg hover:bg-cardHover border border-gray-700 text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-download text-accent"></i> JSON İndir (Yedekle)
                         </button>
-                        <label class="bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5">
-                            <i class="fa-solid fa-upload text-neonGreen"></i> Verileri İçe Aktar
+                        <label class="bg-cardBg hover:bg-cardHover border border-gray-700 text-gray-200 px-3 py-2 rounded-xl font-medium transition-all cursor-pointer flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-upload text-neonGreen"></i> JSON Yükle (Geri Yükle)
                             <input type="file" id="importFile" accept=".json" onchange="importData(event)" class="hidden">
                         </label>
                     </div>
                 </div>
 
-                <div class="pt-2 border-t border-gray-100 dark:border-gray-800/80 flex items-center justify-between">
+                <div class="pt-2 border-t border-gray-800 flex items-center justify-between">
                     <div>
-                        <span class="text-gray-700 dark:text-gray-300 font-semibold block">Fabrika Ayarları</span>
-                        <span class="text-[10px] text-gray-500">Tüm akışı ve vizyon kartlarını temizler.</span>
+                        <span class="text-gray-300 font-semibold block">Sistemi Sıfırla</span>
+                        <span class="text-[10px] text-gray-500">Bütün verileri ve akışı temizler.</span>
                     </div>
-                    <button onclick="resetData()" class="bg-red-500/10 hover:bg-red-500/20 text-red-500 dark:text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer font-medium">
+                    <button onclick="resetData()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1.5 rounded-xl transition-all cursor-pointer font-medium">
                         Sıfırla
                     </button>
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100 dark:border-gray-800">
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-800">
                 <button onclick="saveSettingsModal()" class="px-5 py-2.5 rounded-xl bg-accent hover:bg-accentHover text-white font-bold transition-all cursor-pointer text-xs shadow-md shadow-accent/20">
-                    Değişiklikleri Kaydet
+                    Kaydet ve Kapat
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript - Motor -->
+    <!-- JavaScript - Komuta Motoru -->
     <script>
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('currentDateString').innerText = new Date().toLocaleDateString('tr-TR', options);
 
-        let userProfile = JSON.parse(localStorage.getItem('nexus_user_profile')) || { name: 'CoreOS', badge: 'PRO' };
+        let userProfile = JSON.parse(localStorage.getItem('nexus_user_profile')) || { name: 'CoreOS', badge: 'PRO', mood: '⚡' };
         let currentTheme = localStorage.getItem('nexus_theme') || 'dark';
 
         function applyTheme() {
@@ -349,13 +367,24 @@
             localStorage.setItem('nexus_theme', currentTheme);
             applyTheme();
         }
+
+        function setMood(mood) {
+            userProfile.mood = mood;
+            document.getElementById('currentMoodDisplay').innerText = mood;
+            saveAndRender();
+        }
         
         const todayStr = new Date().toISOString().slice(0, 10);
         let streamItems = JSON.parse(localStorage.getItem('nexus_stream_items')) || [
-            { id: '1', content: 'Q3 bütçe planlaması için yöneticilerle mini toplantı', type: 'task', completed: false, dueDate: `${todayStr}T10:00`, timestamp: new Date(Date.now() - 7200000).toISOString() },
-            { id: '2', content: 'Mobil uygulama arayüzü için yeni konsept tasarımı', type: 'idea', completed: false, dueDate: `${todayStr}T14:30`, timestamp: new Date(Date.now() - 18000000).toISOString() },
-            { id: '3', content: 'Haftalık kişisel liderlik hedeflerini gözden geçir', type: 'goal', completed: true, dueDate: `${todayStr}T17:00`, timestamp: new Date(Date.now() - 36000000).toISOString() }
+            { id: '1', content: 'ERP sistem modülleri gözden geçirilecek #is', type: 'task', status: 'active', dueDate: `${todayStr}T10:00`, timestamp: new Date(Date.now() - 7200000).toISOString() },
+            { id: '2', content: 'İngilizce pub oyunu için yeni bulmaca senaryosu #etkinlik', type: 'idea', status: 'active', dueDate: `${todayStr}T14:30`, timestamp: new Date(Date.now() - 18000000).toISOString() },
+            { id: '3', content: 'Stoik felsefe ve zihinsel direnç rutini #kisisel', type: 'goal', status: 'completed', dueDate: `${todayStr}T17:00`, timestamp: new Date(Date.now() - 36000000).toISOString() }
         ];
+
+        streamItems = streamItems.map(item => {
+            if (!item.status) item.status = item.completed ? 'completed' : 'active';
+            return item;
+        });
 
         let visionItems = JSON.parse(localStorage.getItem('nexus_vision_items')) || [
             { id: 'v1', title: 'Odak ve Kararlılık', imageUrl: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&auto=format&fit=crop&q=80', quote: 'Vizyon, görünmeyeni görebilme sanatıdır.' }
@@ -365,11 +394,147 @@
         let currentFilter = 'all';
         let calendarDate = new Date();
         let selectedStreamDate = new Date().toISOString().slice(0, 10);
-        let modalActiveDate = '';
+        let activePopupItemId = null; // Süresi gelen görev ID'si
+
+        // Pomodoro State
+        let pomodoroTime = 25 * 60;
+        let pomodoroTimer = null;
+        let isPomodoroRunning = false;
+
+        function togglePomodoroModal() {
+            const modal = document.getElementById('pomodoroModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function startPomodoro() {
+            const btn = document.getElementById('pomoStartBtn');
+            if (isPomodoroRunning) {
+                clearInterval(pomodoroTimer);
+                isPomodoroRunning = false;
+                btn.innerText = "Devam Et";
+                btn.className = "bg-accent hover:bg-accentHover text-white font-bold px-5 py-2 rounded-xl text-xs transition-all cursor-pointer";
+            } else {
+                isPomodoroRunning = true;
+                btn.innerText = "Duraklat";
+                btn.className = "bg-neonAmber hover:bg-neonAmber/80 text-darkBg font-bold px-5 py-2 rounded-xl text-xs transition-all cursor-pointer";
+                pomodoroTimer = setInterval(() => {
+                    if (pomodoroTime > 0) {
+                        pomodoroTime--;
+                        updatePomodoroDisplay();
+                    } else {
+                        clearInterval(pomodoroTimer);
+                        isPomodoroRunning = false;
+                        showMotivationPopup({
+                            title: "Mola Zamanı! ☕",
+                            subtitle: "Pomodoro Seansı Tamamlandı",
+                            quote: `"Harika bir odak seansı geride kaldı. Şimdi zihnini dinlendir, bir sonraki hamle için hazırsın. Müthiş ilerliyorsun! ⚡"`
+                        });
+                        resetPomodoro();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetPomodoro() {
+            clearInterval(pomodoroTimer);
+            isPomodoroRunning = false;
+            pomodoroTime = 25 * 60;
+            updatePomodoroDisplay();
+            document.getElementById('pomoStartBtn').innerText = "Başlat";
+            document.getElementById('pomoStartBtn').className = "bg-neonGreen hover:bg-neonGreen/80 text-darkBg font-bold px-5 py-2 rounded-xl text-xs transition-all cursor-pointer";
+        }
+
+        function updatePomodoroDisplay() {
+            const m = Math.floor(pomodoroTime / 60);
+            const s = pomodoroTime % 60;
+            const str = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            document.getElementById('pomodoroDisplay').innerText = str;
+            document.getElementById('modalTimerDisplay').innerText = str;
+        }
+
+        // Motivasyonel Pop-up Yönetimi
+        function showMotivationPopup(data, itemId = null) {
+            activePopupItemId = itemId;
+            document.getElementById('popupTitle').innerText = data.title;
+            document.getElementById('popupSubtitle').innerText = data.subtitle || "Zamanlayıcı Uyarısı";
+            document.getElementById('popupQuote').innerText = data.quote;
+            document.getElementById('motivationModal').style.display = 'flex';
+        }
+
+        function closeMotivationModal(markAsCompleted = false) {
+            if (markAsCompleted && activePopupItemId) {
+                const item = streamItems.find(i => i.id === activePopupItemId);
+                if (item) {
+                    item.status = 'completed';
+                    saveAndRender();
+                }
+            }
+            activePopupItemId = null;
+            document.getElementById('motivationModal').style.display = 'none';
+        }
+
+        // Dakikalık Süre Kontrol Döngüsü (Hatırlatıcı ve Süresi Gelen Görevler)
+        setInterval(() => {
+            const now = new Date();
+            const currentIsoMinute = now.toISOString().slice(0, 16); // "YYYY-MM-DDTHH:mm"
+
+            streamItems.forEach(item => {
+                if (item.status === 'active' && item.dueDate) {
+                    const itemMinute = item.dueDate.slice(0, 16);
+                    if (itemMinute === currentIsoMinute && !item._notified) {
+                        item._notified = true; // Tekrar tekrar tetiklenmesin
+                        showMotivationPopup({
+                            title: `Vakti Geldi: "${item.content.slice(0, 30)}..."`,
+                            subtitle: "Zamanlayıcı / Hatırlatıcı",
+                            quote: `"Zamanı yakaladın! Bu adımı tamamlamak seni hedefine bir adım daha yaklaştıracak. Harika iş çıkarıyorsun! 🎯"`
+                        }, item.id);
+                    }
+                }
+            });
+        }, 15000); // Her 15 saniyede bir kontrol et
+
+        // İstatistik Kartlarına Tıklama Fonksiyonu (Filtreleme)
+        function filterByStat(statType) {
+            switchMainView('stream');
+            if (statType === 'completed') {
+                currentFilter = 'all';
+                // Görünümde tamamlananları öne çıkar veya filtrele
+                selectedStreamDate = new Date().toISOString().slice(0, 10);
+                updateStreamDateLabel();
+            } else if (statType === 'active') {
+                currentFilter = 'task';
+            } else if (statType === 'idea') {
+                currentFilter = 'idea';
+            }
+            // Sekme stillerini güncelle
+            ['all', 'idea', 'task', 'goal', 'reminder', 'event'].forEach(f => {
+                const btn = document.getElementById(`filter-${f}`);
+                if (btn) {
+                    btn.className = f === currentFilter 
+                        ? "filter-btn px-3.5 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap"
+                        : "filter-btn px-3.5 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap";
+                }
+            });
+            render();
+        }
+
+        // Klavye Kısayolu: Ctrl + K
+        window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                switchMainView('stream');
+                const input = document.getElementById('streamInput');
+                if (input) {
+                    input.focus();
+                    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
 
         function applyProfileUI() {
-            document.getElementById('appTitleDisplay').innerHTML = `${escapeHtml(userProfile.name)} <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="userBadgeLabel">${escapeHtml(userProfile.badge)}</span>`;
-            document.getElementById('profileNameBtn').innerText = userProfile.name.split(' ')[0] || 'Profil';
+            document.getElementById('appTitleDisplay').innerHTML = `${escapeHtml(userProfile.name)} <span class="text-[10px] bg-accent/25 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30">PRO</span>`;
+            document.getElementById('profileNameBtn').innerText = userProfile.name.split(' ')[0] || 'Ayarlar';
+            document.getElementById('currentMoodDisplay').innerText = userProfile.mood || '⚡';
         }
         applyProfileUI();
 
@@ -383,22 +548,18 @@
 
         function switchMainView(view) {
             currentView = view;
-            ['stream', 'calendar', 'vision'].forEach(v => {
+            ['stream', 'kanban', 'timeline', 'calendar', 'vision'].forEach(v => {
                 const btn = document.getElementById(`nav-${v}`);
                 const btnM = document.getElementById(`nav-${v}-m`);
                 if (btn) {
-                    if (v === view) {
-                        btn.className = "px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all cursor-pointer shadow-sm";
-                    } else {
-                        btn.className = "px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1";
-                    }
+                    btn.className = v === view 
+                        ? "px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all cursor-pointer shadow-sm"
+                        : "px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1";
                 }
                 if (btnM) {
-                    if (v === view) {
-                        btnM.className = "flex-1 py-1.5 rounded-lg bg-accent text-white font-medium text-center";
-                    } else {
-                        btnM.className = "flex-1 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 text-center";
-                    }
+                    btnM.className = v === view 
+                        ? "py-1.5 rounded-lg bg-accent text-white font-medium text-center"
+                        : "py-1.5 rounded-lg text-gray-400 text-center";
                 }
             });
 
@@ -423,284 +584,80 @@
             const curr = new Date(selectedStreamDate);
             curr.setDate(curr.getDate() + direction);
             selectedStreamDate = curr.toISOString().slice(0, 10);
+            updateStreamDateLabel();
             render();
         }
 
         function resetToToday() {
             selectedStreamDate = new Date().toISOString().slice(0, 10);
+            updateStreamDateLabel();
             render();
+        }
+
+        function updateStreamDateLabel() {
+            const label = document.getElementById('activeDateLabel');
+            const resetBtn = document.getElementById('todayResetBtn');
+            const today = new Date().toISOString().slice(0, 10);
+
+            if (selectedStreamDate === today) {
+                label.innerText = 'Bugün';
+                resetBtn.classList.add('hidden');
+            } else {
+                label.innerText = new Date(selectedStreamDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+                resetBtn.classList.remove('hidden');
+            }
+        }
+
+        function handleKeyDown(e) {
+            if (e.key === 'Enter') {
+                addStreamItem();
+            }
         }
 
         function addStreamItem() {
             const input = document.getElementById('streamInput');
-            const typeSelect = document.getElementById('streamType');
             const timeInput = document.getElementById('streamTime');
+            const typeInput = document.getElementById('streamType');
             
-            const text = input.value.trim();
-            if (!text) return;
+            const val = input.value.trim();
+            if (!val) return;
 
-            const timeValue = timeInput.value || '09:00';
+            const timeVal = timeInput.value || '09:00';
+            const dueDate = `${selectedStreamDate}T${timeVal}`;
 
-            streamItems.unshift({
+            const newItem = {
                 id: Date.now().toString(),
-                content: text,
-                type: typeSelect.value,
-                completed: false,
-                dueDate: `${selectedStreamDate}T${timeValue}`,
+                content: val,
+                type: typeInput.value,
+                status: 'active',
+                dueDate: dueDate,
                 timestamp: new Date().toISOString()
-            });
+            };
 
+            streamItems.unshift(newItem);
             input.value = '';
             saveAndRender();
-            input.focus();
         }
 
-        // --- TAKVİM GÜNÜ TIKLANDIĞINDA AÇILAN PENCERE FONKSİYONLARI ---
-        function openCalendarDayModal(dateStr) {
-            modalActiveDate = dateStr;
-            const modal = document.getElementById('calendarDayModal');
-            const titleEl = document.getElementById('calModalTitle');
-            const subtitleEl = document.getElementById('calModalSubtitle');
-            
-            const formattedDate = new Date(dateStr).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
-            titleEl.innerText = formattedDate;
-            subtitleEl.innerText = `${dateStr} tarihli etkinlikler ve komuta merkezi`;
-
-            renderCalendarDayModalItems();
-            modal.classList.remove('hidden');
-        }
-
-        function closeCalendarDayModal() {
-            document.getElementById('calendarDayModal').classList.add('hidden');
-        }
-
-        function renderCalendarDayModalItems() {
-            const listContainer = document.getElementById('calModalItemsList');
-            const dayItems = streamItems.filter(i => i.dueDate && i.dueDate.startsWith(modalActiveDate));
-
-            if (dayItems.length === 0) {
-                listContainer.innerHTML = `<p class="text-xs text-gray-400 italic py-2 text-center">Bu güne ait kayıt bulunmuyor.</p>`;
-                return;
-            }
-
-            let html = '';
-            dayItems.forEach(item => {
-                const timeStr = item.dueDate ? item.dueDate.split('T')[1] || '' : '';
-                let typeBadge = 'Fikir';
-                let badgeClass = 'text-accent bg-accent/10';
-                if(item.type === 'task') { typeBadge = 'Görev'; badgeClass = 'text-neonGreen bg-neonGreen/10'; }
-                else if(item.type === 'goal') { typeBadge = 'Hedef'; badgeClass = 'text-neonAmber bg-neonAmber/10'; }
-                else if(item.type === 'reminder') { typeBadge = 'Hatırlatıcı'; badgeClass = 'text-neonPurple bg-neonPurple/10'; }
-
-                html += `
-                    <div class="flex items-center justify-between bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl p-2.5 text-xs">
-                        <div class="flex items-center gap-2.5 flex-1 min-w-0">
-                            <button onclick="toggleComplete('${item.id}'); renderCalendarDayModalItems();" class="w-5 h-5 rounded border ${item.completed ? 'bg-neonGreen border-neonGreen text-white' : 'border-gray-400'} flex items-center justify-center shrink-0 cursor-pointer">
-                                ${item.completed ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
-                            </button>
-                            <div class="flex flex-col truncate">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-[9px] px-1.5 py-0.5 rounded ${badgeClass} font-medium">${typeBadge}</span>
-                                    ${timeStr ? `<span class="text-[10px] text-gray-400 font-mono">${timeStr}</span>` : ''}
-                                </div>
-                                <span class="text-gray-800 dark:text-gray-200 truncate ${item.completed ? 'line-through text-gray-400' : ''}">${escapeHtml(item.content)}</span>
-                            </div>
-                        </div>
-                        <button onclick="deleteItem('${item.id}'); renderCalendarDayModalItems();" class="text-gray-400 hover:text-red-500 p-1 cursor-pointer"><i class="fa-solid fa-trash text-xs"></i></button>
-                    </div>
-                `;
-            });
-            listContainer.innerHTML = html;
-        }
-
-        function addQuickItemFromCalendar() {
-            const contentInput = document.getElementById('calQuickContent');
-            const timeInput = document.getElementById('calQuickTime');
-            const typeSelect = document.getElementById('calQuickType');
-
-            const text = contentInput.value.trim();
-            if (!text) return;
-
-            const timeValue = timeInput.value || '09:00';
-
-            streamItems.unshift({
-                id: Date.now().toString(),
-                content: text,
-                type: typeSelect.value,
-                completed: false,
-                dueDate: `${modalActiveDate}T${timeValue}`,
-                timestamp: new Date().toISOString()
-            });
-
-            contentInput.value = '';
-            saveAndRender();
-            renderCalendarDayModalItems();
-        }
-
-        function jumpToStreamFromModal() {
-            selectedStreamDate = modalActiveDate;
-            closeCalendarDayModal();
-            switchMainView('stream');
-        }
-
-        function openModal(id = null, defaultDate = '') {
-            const modal = document.getElementById('itemModal');
-            const titleEl = document.getElementById('modalTitle');
-            const idEl = document.getElementById('modalItemId');
-            const contentEl = document.getElementById('modalContent');
-            const typeEl = document.getElementById('modalType');
-            const dateEl = document.getElementById('modalDate');
-
-            modal.classList.remove('hidden');
-
-            if (id) {
-                const item = streamItems.find(i => i.id === id);
-                if (item) {
-                    titleEl.innerText = 'Etkinliği / Görevi Düzenle';
-                    idEl.value = item.id;
-                    contentEl.value = item.content;
-                    typeEl.value = item.type;
-                    dateEl.value = item.dueDate;
-                }
-            } else {
-                titleEl.innerText = 'Yeni Etkinlik Ekle';
-                idEl.value = '';
-                contentEl.value = '';
-                typeEl.value = 'task';
-                dateEl.value = defaultDate ? `${defaultDate}T09:00` : `${selectedStreamDate}T09:00`;
-            }
-            contentEl.focus();
-        }
-
-        function closeModal() {
-            document.getElementById('itemModal').classList.add('hidden');
-        }
-
-        function saveModalItem() {
-            const id = document.getElementById('modalItemId').value;
-            const content = document.getElementById('modalContent').value.trim();
-            const type = document.getElementById('modalType').value;
-            const dueDate = document.getElementById('modalDate').value;
-
-            if (!content) return;
-
-            if (id) {
-                const item = streamItems.find(i => i.id === id);
-                if (item) {
-                    item.content = content;
-                    item.type = type;
-                    item.dueDate = dueDate;
-                }
-            } else {
-                streamItems.unshift({
-                    id: Date.now().toString(),
-                    content: content,
-                    type: type,
-                    completed: false,
-                    dueDate: dueDate,
-                    timestamp: new Date().toISOString()
-                });
-            }
-
-            closeModal();
-            saveAndRender();
-        }
-
-        function openSettingsModal() {
-            document.getElementById('settingsAppName').value = userProfile.name;
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
-
-        function saveSettingsModal() {
-            const nameInput = document.getElementById('settingsAppName').value.trim();
-            if (nameInput) {
-                userProfile.name = nameInput;
-            }
-            closeSettingsModal();
-            saveAndRender();
-        }
-
-        function exportData() {
-            const dataObj = {
-                profile: userProfile,
-                streamItems: streamItems,
-                visionItems: visionItems
-            };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataObj, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `coreos_backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importData(event) {
-            const fileReader = new FileReader();
-            if (event.target.files[0]) {
-                fileReader.readAsText(event.target.files[0], "UTF-8");
-                fileReader.onload = function(e) {
-                    try {
-                        const parsed = JSON.parse(e.target.result);
-                        if (parsed.streamItems) streamItems = parsed.streamItems;
-                        if (parsed.visionItems) visionItems = parsed.visionItems;
-                        if (parsed.profile) userProfile = parsed.profile;
-                        saveAndRender();
-                        closeSettingsModal();
-                        alert("Veriler başarıyla yüklendi!");
-                    } catch (err) {
-                        alert("Dosya okunurken hata oluştu. Geçerli bir JSON yedek dosyası seçtiğinizden emin olun.");
+        function setFilter(filter) {
+            currentFilter = filter;
+            ['all', 'idea', 'task', 'goal', 'reminder', 'event'].forEach(f => {
+                const btn = document.getElementById(`filter-${f}`);
+                if (btn) {
+                    if (f === filter) {
+                        btn.className = "filter-btn px-3.5 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap";
+                    } else {
+                        btn.className = "filter-btn px-3.5 py-2 rounded-xl bg-cardBg text-gray-400 hover:text-white hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap";
                     }
                 }
-            }
-        }
-
-        function resetData() {
-            if (confirm("Tüm verileriniz sıfırlanacak. Emin misiniz?")) {
-                localStorage.removeItem('nexus_stream_items');
-                localStorage.removeItem('nexus_vision_items');
-                localStorage.removeItem('nexus_user_profile');
-                location.reload();
-            }
-        }
-
-        function addVisionItem() {
-            const titleInput = document.getElementById('visionTitle');
-            const imgInput = document.getElementById('visionImg');
-            const quoteInput = document.getElementById('visionQuote');
-
-            if (!titleInput.value.trim()) return;
-
-            visionItems.unshift({
-                id: Date.now().toString(),
-                title: titleInput.value.trim(),
-                imageUrl: imgInput.value.trim() || 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=80',
-                quote: quoteInput.value.trim() || 'Hedefe odaklan.'
             });
-
-            titleInput.value = '';
-            imgInput.value = '';
-            quoteInput.value = '';
-            saveAndRender();
+            render();
         }
 
-        function deleteVisionItem(id) {
-            visionItems = visionItems.filter(i => i.id !== id);
-            saveAndRender();
-        }
-
-        function handleKeyDown(event) {
-            if (event.key === 'Enter') addStreamItem();
-        }
-
-        function toggleComplete(id) {
+        function toggleStatus(id, newStatus) {
             const item = streamItems.find(i => i.id === id);
             if (item) {
-                item.completed = !item.completed;
+                item.status = item.status === newStatus ? 'active' : newStatus;
                 saveAndRender();
             }
         }
@@ -711,238 +668,400 @@
         }
 
         function clearCompleted() {
-            streamItems = streamItems.filter(i => !i.completed);
+            streamItems = streamItems.filter(i => i.status !== 'completed' && i.status !== 'abandoned');
             saveAndRender();
         }
 
-        function setFilter(filter) {
-            currentFilter = filter;
-            ['all', 'idea', 'task', 'goal', 'reminder'].forEach(f => {
-                const btn = document.getElementById(`filter-${f}`);
-                if (btn) {
-                    if (f === filter) {
-                        btn.className = "filter-btn px-4 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap";
-                    } else {
-                        btn.className = "filter-btn px-4 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap border border-gray-200 dark:border-transparent";
-                    }
-                }
-            });
-            render();
+        // Modals
+        function openEditModal(id) {
+            const item = streamItems.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('modalItemId').value = item.id;
+            document.getElementById('modalContent').value = item.content;
+            document.getElementById('modalType').value = item.type;
+            document.getElementById('modalDate').value = item.dueDate || `${todayStr}T09:00`;
+            document.getElementById('itemModal').style.display = 'flex';
         }
 
-        function changeCalendarMonth(direction) {
-            calendarDate.setMonth(calendarDate.getMonth() + direction);
-            render();
+        function closeModal() {
+            document.getElementById('itemModal').style.display = 'none';
         }
 
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-
-        function render() {
-            const todayDateStr = new Date().toISOString().slice(0, 10);
-            const dateLabelEl = document.getElementById('activeDateLabel');
-            const resetBtnEl = document.getElementById('todayResetBtn');
-
-            if (selectedStreamDate === todayDateStr) {
-                dateLabelEl.innerText = "Bugün (" + new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'short' }) + ")";
-                resetBtnEl.classList.add('hidden');
-            } else {
-                dateLabelEl.innerText = new Date(selectedStreamDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long', year: 'numeric' });
-                resetBtnEl.classList.remove('hidden');
+        function saveModalItem() {
+            const id = document.getElementById('modalItemId').value;
+            const item = streamItems.find(i => i.id === id);
+            if (item) {
+                item.content = document.getElementById('modalContent').value;
+                item.type = document.getElementById('modalType').value;
+                item.dueDate = document.getElementById('modalDate').value;
+                saveAndRender();
             }
+            closeModal();
+        }
 
-            const totalCount = streamItems.length;
-            const completedCount = streamItems.filter(i => i.completed).length;
-            const pendingCount = totalCount - completedCount;
-            const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+        function openSettingsModal() {
+            document.getElementById('settingsAppName').value = userProfile.name;
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
 
-            document.getElementById('completionRate').innerText = `%${percent} Tamamlandı`;
-            document.getElementById('activeTaskCount').innerText = `${totalCount} Öğe`;
-            document.getElementById('ideaCount').innerText = `${streamItems.filter(i => i.type === 'idea').length} Fikir`;
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
 
-            document.getElementById('badgeCompletedCount').innerText = completedCount;
-            document.getElementById('badgePendingCount').innerText = pendingCount;
+        function saveSettingsModal() {
+            userProfile.name = document.getElementById('settingsAppName').value || 'CoreOS';
+            saveAndRender();
+            closeSettingsModal();
+        }
+
+        function exportData() {
+            const data = {
+                profile: userProfile,
+                stream: streamItems,
+                vision: visionItems
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `coreos_backup_${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed.stream) streamItems = parsed.stream;
+                    if (parsed.profile) userProfile = parsed.profile;
+                    if (parsed.vision) visionItems = parsed.vision;
+                    saveAndRender();
+                    alert("Veriler başarıyla içe aktarıldı!");
+                    closeSettingsModal();
+                } catch (err) {
+                    alert("Geçersiz JSON dosyası!");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetData() {
+            if (confirm("Bütün veriler silinecek. Emin misiniz?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Render Engine
+        function render() {
+            const total = streamItems.length;
+            const completed = streamItems.filter(i => i.status === 'completed').length;
+            const abandoned = streamItems.filter(i => i.status === 'abandoned').length;
+            const active = streamItems.filter(i => i.status === 'active').length;
+            const ideas = streamItems.filter(i => i.type === 'idea').length;
+
+            const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('completionRate').innerText = `%${rate} Tamamlandı`;
+            document.getElementById('activeTaskCount').innerText = `${active} Görev`;
+            document.getElementById('ideaCount').innerText = `${ideas} Fikir`;
+            document.getElementById('badgeCompletedCount').innerText = completed;
+            document.getElementById('badgeAbandonedCount').innerText = abandoned;
 
             const container = document.getElementById('mainContainer');
             container.innerHTML = '';
 
             if (currentView === 'stream') {
-                let filtered = streamItems.filter(i => i.dueDate && i.dueDate.startsWith(selectedStreamDate));
-                if (currentFilter !== 'all') {
-                    filtered = filtered.filter(i => i.type === currentFilter);
+                renderStreamView(container);
+            } else if (currentView === 'kanban') {
+                renderKanbanView(container);
+            } else if (currentView === 'timeline') {
+                renderTimelineView(container);
+            } else if (currentView === 'calendar') {
+                renderCalendarView(container);
+            } else if (currentView === 'vision') {
+                renderVisionView(container);
+            }
+        }
+
+        function renderStreamView(container) {
+            let filtered = streamItems.filter(item => {
+                const itemDate = item.dueDate ? item.dueDate.slice(0, 10) : '';
+                return itemDate === selectedStreamDate;
+            });
+
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(i => i.type === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-cardBg border border-gray-800 rounded-2xl p-12 text-center flex flex-col items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-inbox"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-base">Bu tarih için kayıt bulunmuyor</h3>
+                        <p class="text-xs text-gray-400 max-w-sm">Yukarıdaki hızlı giriş çubuğunu kullanarak bu güne yeni bir fikir, görev veya etkinlik ekleyebilirsin.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const isComp = item.status === 'completed';
+                const isAband = item.status === 'abandoned';
+                
+                let typeBadge = '';
+                let borderCol = 'border-gray-800/80';
+                if (item.type === 'idea') {
+                    typeBadge = '<span class="text-[10px] bg-neonAmber/10 text-neonAmber px-2 py-0.5 rounded-md font-medium border border-neonAmber/20">Fikir</span>';
+                } else if (item.type === 'task') {
+                    typeBadge = '<span class="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-md font-medium border border-accent/20">Görev</span>';
+                } else if (item.type === 'goal') {
+                    typeBadge = '<span class="text-[10px] bg-neonPurple/10 text-neonPurple px-2 py-0.5 rounded-md font-medium border border-neonPurple/20">Hedef</span>';
+                } else if (item.type === 'reminder') {
+                    typeBadge = '<span class="text-[10px] bg-neonGreen/10 text-neonGreen px-2 py-0.5 rounded-md font-medium border border-neonGreen/20">Hatırlatıcı</span>';
+                } else if (item.type === 'event') {
+                    typeBadge = '<span class="text-[10px] bg-indigo-500/10 text-indigo-400 px-2 py-0.5 rounded-md font-medium border border-indigo-500/20"><i class="fa-solid fa-handshake mr-1"></i>Randevu</span>';
                 }
 
-                if (filtered.length === 0) {
-                    container.innerHTML = `
-                        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-8 text-center flex flex-col items-center justify-center gap-3 shadow-sm">
-                            <div class="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-400 text-xl">
-                                <i class="fa-solid fa-feather"></i>
+                let timeStr = '';
+                if (item.dueDate && item.dueDate.includes('T')) {
+                    timeStr = item.dueDate.split('T')[1];
+                }
+
+                let contentHtml = escapeHtml(item.content);
+                contentHtml = contentHtml.replace(/#([\wüŞşİıÖöÇçĞğ0-9_-]+)/g, '<span class="text-accent font-medium">#$1</span>');
+
+                const card = document.createElement('div');
+                card.className = `bg-cardBg border ${borderCol} rounded-2xl p-4 flex items-center justify-between gap-4 transition-all hover:border-gray-700 shadow-sm`;
+                if (isComp) card.style.opacity = '0.6';
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3.5 min-w-0 flex-1">
+                        <button onclick="toggleStatus('${item.id}', 'completed')" class="w-6 h-6 rounded-lg border ${isComp ? 'bg-neonGreen border-neonGreen text-darkBg' : 'border-gray-700 bg-inputBg hover:border-accent'} flex items-center justify-center transition-all cursor-pointer flex-shrink-0">
+                            ${isComp ? '<i class="fa-solid fa-check text-xs font-bold"></i>' : ''}
+                        </button>
+                        <div class="min-w-0 flex-1 flex flex-col gap-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                ${typeBadge}
+                                ${timeStr ? `<span class="text-[10px] text-gray-400 font-mono"><i class="fa-regular fa-clock mr-1"></i>${timeStr}</span>` : ''}
                             </div>
-                            <h3 class="font-bold text-gray-700 dark:text-gray-300 text-sm">Bu gün için henüz bir akış öğesi yok</h3>
-                            <p class="text-xs text-gray-500 max-w-sm">Yukarıdaki hızlı yakalama çubuğunu kullanarak zihnini boşaltabilir, görev veya fikir ekleyebilirsin.</p>
+                            <p class="text-sm ${isComp ? 'line-through text-gray-500' : isAband ? 'line-through text-red-400/70' : 'text-gray-200'} break-words">${contentHtml}</p>
                         </div>
-                    `;
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <button onclick="toggleStatus('${item.id}', 'abandoned')" class="w-8 h-8 rounded-xl bg-inputBg hover:bg-gray-800 text-gray-400 hover:text-red-400 border border-gray-800 flex items-center justify-center transition-all cursor-pointer text-xs" title="Vazgeçildi / İptal">
+                            <i class="fa-solid fa-ban"></i>
+                        </button>
+                        <button onclick="openEditModal('${item.id}')" class="w-8 h-8 rounded-xl bg-inputBg hover:bg-gray-800 text-gray-400 hover:text-white border border-gray-800 flex items-center justify-center transition-all cursor-pointer text-xs" title="Düzenle">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="deleteItem('${item.id}')" class="w-8 h-8 rounded-xl bg-inputBg hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-gray-800 flex items-center justify-center transition-all cursor-pointer text-xs" title="Sil">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderKanbanView(container) {
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-cardBg border border-gray-800 rounded-2xl p-4 flex flex-col gap-3">
+                        <h3 class="font-bold text-sm text-white flex items-center justify-between border-b border-gray-800 pb-2">
+                            <span><i class="fa-solid fa-bolt text-accent mr-1.5"></i> Aktif Yapılacaklar</span>
+                            <span class="text-xs bg-inputBg px-2 py-0.5 rounded-full text-gray-400">${streamItems.filter(i=>i.status==='active').length}</span>
+                        </h3>
+                        <div id="kanban-active" class="flex flex-col gap-2.5 min-h-[300px]"></div>
+                    </div>
+                    <div class="bg-cardBg border border-gray-800 rounded-2xl p-4 flex flex-col gap-3">
+                        <h3 class="font-bold text-sm text-white flex items-center justify-between border-b border-gray-800 pb-2">
+                            <span><i class="fa-solid fa-circle-check text-neonGreen mr-1.5"></i> Tamamlananlar</span>
+                            <span class="text-xs bg-inputBg px-2 py-0.5 rounded-full text-gray-400">${streamItems.filter(i=>i.status==='completed').length}</span>
+                        </h3>
+                        <div id="kanban-completed" class="flex flex-col gap-2.5 min-h-[300px]"></div>
+                    </div>
+                    <div class="bg-cardBg border border-gray-800 rounded-2xl p-4 flex flex-col gap-3">
+                        <h3 class="font-bold text-sm text-white flex items-center justify-between border-b border-gray-800 pb-2">
+                            <span><i class="fa-solid fa-ban text-neonRed mr-1.5"></i> Vazgeçilenler</span>
+                            <span class="text-xs bg-inputBg px-2 py-0.5 rounded-full text-gray-400">${streamItems.filter(i=>i.status==='abandoned').length}</span>
+                        </h3>
+                        <div id="kanban-abandoned" class="flex flex-col gap-2.5 min-h-[300px]"></div>
+                    </div>
+                </div>
+            `;
+
+            ['active', 'completed', 'abandoned'].forEach(status => {
+                const colBox = document.getElementById(`kanban-${status}`);
+                const items = streamItems.filter(i => (i.status || 'active') === status);
+                
+                if (items.length === 0) {
+                    colBox.innerHTML = `<div class="text-center text-xs text-gray-500 py-8">Kayıt yok</div>`;
                     return;
                 }
 
-                filtered.forEach(item => {
-                    let badgeColor = 'bg-accent/10 text-accent border-accent/20';
-                    let icon = 'fa-solid fa-lightbulb';
-                    let typeName = 'Fikir';
-
-                    if (item.type === 'task') {
-                        badgeColor = 'bg-neonGreen/10 text-neonGreen border-neonGreen/20';
-                        icon = 'fa-solid fa-check';
-                        typeName = 'Görev';
-                    } else if (item.type === 'goal') {
-                        badgeColor = 'bg-neonAmber/10 text-neonAmber border-neonAmber/20';
-                        icon = 'fa-solid fa-bullseye';
-                        typeName = 'Hedef';
-                    } else if (item.type === 'reminder') {
-                        badgeColor = 'bg-neonPurple/10 text-neonPurple border-neonPurple/20';
-                        icon = 'fa-solid fa-bell';
-                        typeName = 'Hatırlatıcı';
-                    }
-
-                    const timeStr = item.dueDate ? item.dueDate.split('T')[1] || '' : '';
-
-                    const card = document.createElement('div');
-                    card.className = `bg-white dark:bg-cardBg border ${item.completed ? 'border-gray-200 dark:border-gray-800/50 opacity-60' : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700'} rounded-2xl p-4 flex items-center justify-between gap-4 transition-all group shadow-sm`;
-                    
-                    card.innerHTML = `
-                        <div class="flex items-center gap-3.5 flex-1 min-w-0">
-                            <button onclick="toggleComplete('${item.id}')" class="w-6 h-6 rounded-lg border ${item.completed ? 'bg-neonGreen border-neonGreen text-white' : 'border-gray-300 dark:border-gray-700 hover:border-accent'} flex items-center justify-center transition-all cursor-pointer shrink-0">
-                                ${item.completed ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
-                            </button>
-                            <div class="flex flex-col gap-1 min-w-0 flex-1">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="text-[10px] px-2 py-0.5 rounded-md border ${badgeColor} font-medium flex items-center gap-1"><i class="${icon}"></i> ${typeName}</span>
-                                    ${timeStr ? `<span class="text-[10px] text-gray-500 font-mono"><i class="fa-regular fa-clock mr-1"></i>${timeStr}</span>` : ''}
-                                </div>
-                                <p class="text-sm text-gray-800 dark:text-gray-200 font-medium break-words ${item.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}">${escapeHtml(item.content)}</p>
+                items.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = "bg-inputBg border border-gray-800 rounded-xl p-3 flex flex-col gap-2 shadow-sm";
+                    el.innerHTML = `
+                        <div class="flex items-center justify-between text-[10px]">
+                            <span class="text-gray-400">${item.dueDate ? item.dueDate.slice(0, 10) : ''}</span>
+                            <div class="flex gap-1">
+                                ${status !== 'active' ? `<button onclick="toggleStatus('${item.id}', 'active')" class="text-accent hover:underline">Aktife Al</button>` : ''}
+                                ${status !== 'completed' ? `<button onclick="toggleStatus('${item.id}', 'completed')" class="text-neonGreen hover:underline">Bitir</button>` : ''}
                             </div>
                         </div>
-                        <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                            <button onclick="openModal('${item.id}')" class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer" title="Düzenle">
-                                <i class="fa-solid fa-pen text-xs"></i>
-                            </button>
-                            <button onclick="deleteItem('${item.id}')" class="w-8 h-8 rounded-xl bg-gray-100 dark:bg-inputBg hover:bg-red-500/20 text-gray-500 dark:text-gray-400 hover:text-red-400 flex items-center justify-center transition-all cursor-pointer" title="Sil">
-                                <i class="fa-solid fa-trash text-xs"></i>
-                            </button>
-                        </div>
+                        <p class="text-xs text-gray-200">${escapeHtml(item.content)}</p>
                     `;
-                    container.appendChild(card);
+                    colBox.appendChild(el);
                 });
+            });
+        }
 
-            } else if (currentView === 'calendar') {
-                const year = calendarDate.getFullYear();
-                const month = calendarDate.getMonth();
-                const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-                
-                const firstDayIndex = new Date(year, month, 1).getDay();
-                const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
-                const totalDays = new Date(year, month + 1, 0).getDate();
+        function renderTimelineView(container) {
+            container.innerHTML = `
+                <div class="bg-cardBg border border-gray-800 rounded-2xl p-6 flex flex-col gap-6">
+                    <h3 class="font-bold text-white text-base flex items-center gap-2">
+                        <i class="fa-solid fa-timeline text-accent"></i> Zaman Tüneli & Akış Geçmişi
+                    </h3>
+                    <div class="relative border-l border-gray-800 ml-3 pl-6 flex flex-col gap-6" id="timelineList"></div>
+                </div>
+            `;
 
-                let calendarHTML = `
-                    <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
-                        <div class="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800">
-                            <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-days text-accent"></i> ${monthNames[month]} ${year}
-                            </h3>
-                            <div class="flex items-center gap-1">
-                                <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-chevron-left text-xs"></i></button>
-                                <button onclick="changeCalendarMonth(1)" class="w-8 h-8 rounded-lg bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-gray-400 pb-2">
-                            <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
-                        </div>
-                        <div class="grid grid-cols-7 gap-2">
+            const list = document.getElementById('timelineList');
+            const sorted = [...streamItems].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            if (sorted.length === 0) {
+                list.innerHTML = `<div class="text-xs text-gray-500">Kayıt bulunmuyor.</div>`;
+                return;
+            }
+
+            sorted.forEach(item => {
+                const dateStr = item.timestamp ? new Date(item.timestamp).toLocaleString('tr-TR') : '';
+                const node = document.createElement('div');
+                node.className = "relative flex flex-col gap-1";
+                node.innerHTML = `
+                    <div class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-accent border-4 border-cardBg"></div>
+                    <span class="text-[10px] text-gray-400 font-mono">${dateStr}</span>
+                    <div class="bg-inputBg border border-gray-800 p-3.5 rounded-xl text-xs text-gray-200">
+                        ${escapeHtml(item.content)}
+                    </div>
                 `;
+                list.appendChild(node);
+            });
+        }
 
-                for (let i = 0; i < adjustedFirstDay; i++) {
-                    calendarHTML += `<div class="min-h-[90px] bg-gray-50/50 dark:bg-inputBg/30 rounded-xl border border-gray-100 dark:border-gray-800/40 opacity-30"></div>`;
-                }
+        function renderCalendarView(container) {
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+            const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-                for (let day = 1; day <= totalDays; day++) {
-                    const dStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                    const dayItems = streamItems.filter(i => i.dueDate && i.dueDate.startsWith(dStr));
-                    const isToday = dStr === todayDateStr;
-
-                    // Hücre içinde içerikleri listeleme
-                    let itemsPreviewHTML = '';
-                    dayItems.slice(0, 2).forEach(item => {
-                        let dotColor = 'bg-accent';
-                        if (item.type === 'task') dotColor = 'bg-neonGreen';
-                        else if (item.type === 'goal') dotColor = 'bg-neonAmber';
-                        else if (item.type === 'reminder') dotColor = 'bg-neonPurple';
-
-                        itemsPreviewHTML += `
-                            <div class="flex items-center gap-1 text-[10px] text-gray-600 dark:text-gray-300 truncate w-full">
-                                <span class="w-1.5 h-1.5 rounded-full ${dotColor} shrink-0"></span>
-                                <span class="truncate ${item.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''}">${escapeHtml(item.content)}</span>
-                            </div>
-                        `;
-                    });
-
-                    if (dayItems.length > 2) {
-                        itemsPreviewHTML += `<span class="text-[9px] text-accent font-medium">+${dayItems.length - 2} daha</span>`;
-                    }
-
-                    calendarHTML += `
-                        <div onclick="openCalendarDayModal('${dStr}')" class="min-h-[90px] bg-gray-50 dark:bg-inputBg hover:bg-gray-100 dark:hover:bg-cardHover border ${isToday ? 'border-accent shadow-sm shadow-accent/25 ring-1 ring-accent' : 'border-gray-200 dark:border-gray-800'} rounded-xl p-2 flex flex-col justify-between transition-all cursor-pointer group relative overflow-hidden">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold ${isToday ? 'text-accent' : 'text-gray-700 dark:text-gray-300'}">${day}</span>
-                                ${dayItems.length > 0 ? `<span class="text-[9px] bg-accent/10 text-accent font-semibold px-1.5 py-0.5 rounded-md">${dayItems.length}</span>` : ''}
-                            </div>
-                            <div class="flex flex-col gap-1 mt-1 overflow-hidden flex-1">
-                                ${itemsPreviewHTML}
-                            </div>
-                        </div>
-                    `;
-                }
-
-                calendarHTML += `</div></div>`;
-                container.innerHTML = calendarHTML;
-
-            } else if (currentView === 'vision') {
-                let visionHTML = `
-                    <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
-                        <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
-                            <i class="fa-solid fa-mountain-sun text-neonAmber"></i> Vizyon ve İlham Panosu
+            container.innerHTML = `
+                <div class="bg-cardBg border border-gray-800 rounded-2xl p-6 flex flex-col gap-5">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-white text-base flex items-center gap-2">
+                            <i class="fa-solid fa-calendar-days text-accent"></i> ${monthNames[month]} ${year}
                         </h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Zihnini canlı tutacak vizyon kartları ekle.</p>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                            <input type="text" id="visionTitle" placeholder="Vizyon Başlığı" class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
-                            <input type="text" id="visionImg" placeholder="Görsel URL (Unsplash vb.)" class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-800 dark:text-gray-200 outline-none focus:border-accent">
-                            <input type="text" id="visionQuote" placeholder="Motto / Özlü Söz" class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-xs text-gray-800 dark:text-gray-200 outline-none focus:border-accent sm:col-span-2">
-                            <button onclick="addVisionItem()" class="bg-accent hover:bg-accentHover text-white font-bold py-2 rounded-xl transition-all cursor-pointer text-xs sm:col-span-2 shadow-md shadow-accent/20">Vizyon Kartı Ekle</button>
+                        <div class="flex items-center gap-1">
+                            <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 rounded-lg bg-inputBg hover:bg-gray-800 border border-gray-800 text-gray-300 flex items-center justify-center cursor-pointer"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                            <button onclick="changeCalendarMonth(1)" class="w-8 h-8 rounded-lg bg-inputBg hover:bg-gray-800 border border-gray-800 text-gray-300 flex items-center justify-center cursor-pointer"><i class="fa-solid fa-chevron-right text-xs"></i></button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                `;
+                    <div class="grid grid-cols-7 gap-2 text-center text-xs font-semibold text-gray-400 pb-2 border-b border-gray-800">
+                        <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
+                    </div>
+                    <div class="grid grid-cols-7 gap-2" id="calendarGrid"></div>
+                </div>
+            `;
 
-                visionItems.forEach(v => {
-                    visionHTML += `
-                        <div class="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 group h-48 flex flex-col justify-end p-4 shadow-lg">
-                            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('${escapeHtml(v.imageUrl)}')"></div>
-                            <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/60 to-transparent"></div>
-                            <div class="relative z-10 flex flex-col gap-1">
-                                <h4 class="font-bold text-white text-sm">${escapeHtml(v.title)}</h4>
-                                <p class="text-[11px] text-gray-300 italic">"${escapeHtml(v.quote)}"</p>
-                            </div>
-                            <button onclick="deleteVisionItem('${v.id}')" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-xl bg-darkBg/80 text-gray-400 hover:text-red-400 flex items-center justify-center transition-all cursor-pointer opacity-0 group-hover:opacity-100">
-                                <i class="fa-solid fa-trash text-xs"></i>
-                            </button>
-                        </div>
-                    `;
-                });
+            const grid = document.getElementById('calendarGrid');
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+            const totalDays = new Date(year, month + 1, 0).getDate();
 
-                visionHTML += `</div>`;
-                container.innerHTML = visionHTML;
+            for (let i = 0; i < adjustedFirstDay; i++) {
+                const emptyCell = document.createElement('div');
+                grid.appendChild(emptyCell);
             }
+
+            for (let d = 1; d <= totalDays; d++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const dayItems = streamItems.filter(i => i.dueDate && i.dueDate.slice(0, 10) === dateStr);
+                const isToday = dateStr === new Date().toISOString().slice(0, 10);
+
+                const cell = document.createElement('div');
+                cell.className = `min-h-[80px] bg-inputBg/60 border ${isToday ? 'border-accent' : 'border-gray-800'} rounded-xl p-2 flex flex-col gap-1 transition-all hover:border-gray-700 cursor-pointer`;
+                cell.onclick = () => {
+                    selectedStreamDate = dateStr;
+                    switchMainView('stream');
+                    updateStreamDateLabel();
+                };
+
+                cell.innerHTML = `
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="${isToday ? 'bg-accent text-white w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px]' : 'text-gray-300 font-semibold'}">${d}</span>
+                        ${dayItems.length > 0 ? `<span class="text-[9px] bg-accent/20 text-accent px-1.5 py-0.2 rounded-full">${dayItems.length}</span>` : ''}
+                    </div>
+                    <div class="flex flex-col gap-0.5 overflow-hidden">
+                        ${dayItems.slice(0, 2).map(i => `<span class="text-[9px] text-gray-400 truncate bg-cardBg px-1 py-0.5 rounded">${escapeHtml(i.content)}</span>`).join('')}
+                    </div>
+                `;
+                grid.appendChild(cell);
+            }
+        }
+
+        function changeCalendarMonth(dir) {
+            calendarDate.setMonth(calendarDate.getMonth() + dir);
+            render();
+        }
+
+        function renderVisionView(container) {
+            container.innerHTML = `
+                <div class="bg-cardBg border border-gray-800 rounded-2xl p-6 flex flex-col gap-5">
+                    <div class="flex items-center justify-between pb-3 border-b border-gray-800">
+                        <h3 class="font-bold text-white text-base flex items-center gap-2">
+                            <i class="fa-solid fa-mountain-sun text-neonAmber"></i> Vizyon & Motivasyon Panosu
+                        </h3>
+                        <button onclick="addVisionItemModal()" class="bg-accent hover:bg-accentHover text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer">Yeni Vizyon Ekle</button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="visionGrid"></div>
+                </div>
+            `;
+
+            const grid = document.getElementById('visionGrid');
+            visionItems.forEach(v => {
+                const card = document.createElement('div');
+                card.className = "relative rounded-2xl overflow-hidden border border-gray-800 h-64 flex flex-col justify-end p-4 group shadow-md";
+                card.innerHTML = `
+                    <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image: url('${v.imageUrl}')"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-darkBg via-darkBg/60 to-transparent"></div>
+                    <div class="relative z-10 flex flex-col gap-1">
+                        <h4 class="font-bold text-white text-base">${escapeHtml(v.title)}</h4>
+                        <p class="text-xs text-gray-300 italic">"${escapeHtml(v.quote || '')}"</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function addVisionItemModal() {
+            const title = prompt("Vizyon Başlığı:");
+            if (!title) return;
+            const quote = prompt("Motivasyon Sözü / Açıklama:") || "";
+            const imageUrl = prompt("Görsel URL'si (Unsplash vb.):") || "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&auto=format&fit=crop&q=80";
+
+            visionItems.push({ id: Date.now().toString(), title, quote, imageUrl });
+            saveAndRender();
         }
 
         render();
