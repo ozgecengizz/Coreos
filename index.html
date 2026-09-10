@@ -30,7 +30,7 @@
 </head>
 <body class="bg-darkBg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-white transition-colors duration-300" id="bodyRoot">
 
-    <!-- Üst Navigasyon -->
+    <!-- Üst Komuta Merkezi Navigasyonu -->
     <header class="bg-[#0f172a]/85 dark:bg-[#0f172a]/85 bg-white/85 backdrop-blur-md border-b border-gray-800 dark:border-gray-800 border-gray-200 sticky top-0 z-50 px-4 sm:px-6 py-3.5 transition-colors">
         <div class="max-w-5xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -50,6 +50,7 @@
 
             <!-- Sağ: Görünüm Seçenekleri, Pomodoro & Ayarlar -->
             <div class="flex items-center gap-2">
+                <!-- Pomodoro Hızlı Sayaç -->
                 <div id="pomodoroWidget" onclick="togglePomodoroModal()" class="hidden sm:flex items-center gap-2 bg-gray-100 dark:bg-gray-800/80 border border-gray-200 dark:border-gray-700/80 px-3 py-1.5 rounded-xl text-xs cursor-pointer hover:border-accent transition-all text-gray-700 dark:text-gray-300">
                     <i class="fa-solid fa-stopwatch text-accent animate-pulse"></i>
                     <span id="pomodoroDisplay" class="font-mono font-bold">25:00</span>
@@ -72,7 +73,6 @@
                 </button>
             </div>
         </div>
-
         <!-- Mobil Görünüm Sekme Barı -->
         <div class="grid grid-cols-4 md:hidden bg-gray-100 dark:bg-inputBg p-1 rounded-xl border border-gray-200 dark:border-gray-800 text-[10px] gap-0.5 mt-3 text-center font-medium">
             <button onclick="switchMainView('stream')" id="nav-stream-m" class="py-1.5 rounded-lg bg-accent text-white">Akış</button>
@@ -85,8 +85,9 @@
     <!-- Ana İçerik Ekranı -->
     <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
         
-        <!-- Enerji/Mod Çubuğu ve İstatistik Kartları -->
+        <!-- Üst İnce Hat Enerji/Mod Çubuğu ve Hemen Altındaki İstatistik Kartları -->
         <section id="statsSection" class="flex flex-col gap-3">
+            <!-- İnce Yatay Mod Çubuğu -->
             <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-2xl px-4 py-2.5 flex items-center justify-between shadow-sm">
                 <span class="text-xs text-gray-400 font-medium flex items-center gap-1.5">
                     <i class="fa-solid fa-bolt text-accent"></i> Günlük Mod / Enerji:
@@ -99,40 +100,41 @@
                 </div>
             </div>
 
+            <!-- İstatistik Kartları (Tıklandığında ilgili bölüme götürür) -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div onclick="setFilter('all')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-accent/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                <div onclick="filterByStat('completed')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-accent/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
                     <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-lg group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-fire-flame-curved"></i>
                     </div>
                     <div>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Günlük Başarı</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Günlük Başarı <i class="fa-solid fa-arrow-pointer text-[10px] text-accent opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="completionRate">%0 Tamamlandı</h2>
                     </div>
                 </div>
 
-                <div onclick="setFilter('task')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-neonGreen/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                <div onclick="filterByStat('active')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-neonGreen/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
                     <div class="w-12 h-12 rounded-xl bg-neonGreen/10 border border-neonGreen/20 flex items-center justify-center text-neonGreen text-lg group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-check-double"></i>
                     </div>
                     <div>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Aktif Görevler</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Aktif Görevler <i class="fa-solid fa-arrow-pointer text-[10px] text-neonGreen opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="activeTaskCount">0 Görev</h2>
                     </div>
                 </div>
 
-                <div onclick="setFilter('idea')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-neonAmber/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                <div onclick="filterByStat('idea')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-neonAmber/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
                     <div class="w-12 h-12 rounded-xl bg-neonAmber/10 border border-neonAmber/20 flex items-center justify-center text-neonAmber text-lg group-hover:scale-105 transition-transform">
                         <i class="fa-solid fa-lightbulb"></i>
                     </div>
                     <div>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Notlar</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Notlar <i class="fa-solid fa-arrow-pointer text-[10px] text-neonAmber opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="ideaCount">0 Not</h2>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Hızlı Girdi Çekmecesi -->
+        <!-- Hızlı Girdi Çekmecesi (Quick Capture Bar) -->
         <section id="captureSection" class="bg-white dark:bg-cardBg border border-accent/40 shadow-lg shadow-accent/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-3 relative transition-all">
             <div class="flex items-center justify-between bg-gray-50 dark:bg-inputBg/80 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 text-xs">
                 <button onclick="changeStreamDate(-1)" class="w-8 h-8 rounded-lg bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm">
@@ -160,7 +162,7 @@
             
             <div class="flex flex-wrap items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800/60 gap-2 text-xs">
                 <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                    <span class="text-[11px]"><i class="fa-solid fa-bolt mr-1 text-accent"></i> <b>Ctrl + K</b> ile hızlı erişim.</span>
+                    <span class="text-[11px]"><i class="fa-solid fa-bolt mr-1 text-accent"></i> <b>Ctrl + K</b> ile her an hızlı giriş yapabilirsin.</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <input type="date" id="streamDateInput" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer" title="Tarih seçin (Boş bırakılırsa Havuz'a gider)">
@@ -182,21 +184,21 @@
             </div>
         </section>
 
-        <!-- Dynamic Tag Cloud -->
+        <!-- Dinamik Etiket Bulutu (Tag Cloud) -->
         <section id="tagCloudSection" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
             <span class="text-gray-400 font-medium shrink-0"><i class="fa-solid fa-tags text-accent mr-1"></i> Etiketler:</span>
             <div id="tagCloudContainer" class="flex items-center gap-1.5"></div>
         </section>
 
-        <!-- Filtre Sekmeleri -->
+        <!-- Filtre Sekmeleri ve Durum Bilgisi -->
         <section id="filterSection" class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
             <div class="flex gap-2 overflow-x-auto text-xs font-medium w-full sm:w-auto">
                 <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-3.5 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap">Tümü</button>
-                <button onclick="setFilter('idea')" id="filter-idea" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer whitespace-nowrap">Notlar</button>
-                <button onclick="setFilter('task')" id="filter-task" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer whitespace-nowrap">Görevler</button>
-                <button onclick="setFilter('goal')" id="filter-goal" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer whitespace-nowrap">Hedefler</button>
-                <button onclick="setFilter('reminder')" id="filter-reminder" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer whitespace-nowrap">Hatırlatıcılar</button>
-                <button onclick="setFilter('event')" id="filter-event" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer whitespace-nowrap">Randevular</button>
+                <button onclick="setFilter('idea')" id="filter-idea" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Notlar</button>
+                <button onclick="setFilter('task')" id="filter-task" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Görevler</button>
+                <button onclick="setFilter('goal')" id="filter-goal" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hedefler</button>
+                <button onclick="setFilter('reminder')" id="filter-reminder" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hatırlatıcılar</button>
+                <button onclick="setFilter('event')" id="filter-event" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Randevular</button>
             </div>
             
             <div class="flex items-center gap-2 text-xs">
@@ -216,12 +218,37 @@
 
     </main>
 
-    <!-- Pomodoro Sayaç Modalı -->
+    <!-- Motivasyonel / Randevu Pop-up Modalı -->
+    <div id="motivationModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-cardBg border border-accent/65 rounded-3xl max-w-md w-full p-8 shadow-2xl shadow-accent/20 flex flex-col items-center text-center gap-6 relative overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-accent to-indigo-400 flex items-center justify-center text-white text-2xl shadow-lg shadow-accent/30 relative z-10">
+                <i id="popupIcon" class="fa-solid fa-bell"></i>
+            </div>
+            <div class="flex flex-col gap-2 relative z-10">
+                <span id="popupSubtitle" class="text-xs uppercase tracking-widest text-accent font-bold">Bildirim</span>
+                <h3 id="popupTitle" class="text-xl font-bold text-gray-900 dark:text-white">Hatırlatıcı veya Randevu</h3>
+                <p id="popupQuote" class="text-sm text-gray-600 dark:text-gray-300 mt-2 italic bg-gray-50 dark:bg-inputBg/80 p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800">
+                    "Zihnini dinlendir, bir sonraki hamle için hazırsın. Başarı, küçük adımların toplamıdır. ⚡"
+                </p>
+            </div>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full relative z-10 pt-2">
+                <button onclick="closeMotivationModal(true)" class="w-full sm:w-auto bg-neonGreen hover:bg-neonGreen/80 text-darkBg font-bold px-6 py-2.5 rounded-xl text-xs transition-all cursor-pointer shadow-md">
+                    Tamamlandı İşaretle
+                </button>
+                <button onclick="closeMotivationModal(false)" class="w-full sm:w-auto bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 px-5 py-2.5 rounded-xl text-xs transition-all cursor-pointer">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pomodoro Sayaç Modalı (Süre ayarlanabilir) -->
     <div id="pomodoroModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl flex flex-col items-center gap-5 text-center">
             <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
                 <i class="fa-solid fa-stopwatch text-accent"></i> Pomodoro Odak Modu
             </h3>
+            <!-- Süre Ayar Girişi -->
             <div class="flex items-center gap-2 text-xs">
                 <label class="text-gray-500">Süre (Dakika):</label>
                 <input type="number" id="pomoCustomMinutes" value="25" min="1" max="120" onchange="updatePomoCustomTime(this.value)" class="w-16 bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-2 py-1 text-center font-bold text-accent outline-none">
@@ -235,27 +262,14 @@
         </div>
     </div>
 
-    <!-- Takvim Gün Detayı & Ekleme Modalı -->
+    <!-- Takvim Gün Detayı Modalı -->
     <div id="calendarDayModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
             <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
                 <h3 id="calendarModalDateTitle" class="font-bold text-gray-900 dark:text-white text-base">Gün Detayları</h3>
                 <button onclick="closeCalendarDayModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            
-            <!-- Hızlı Ekleme Alanı Modalı -->
-            <div class="flex items-center gap-2 bg-gray-50 dark:bg-inputBg p-2 rounded-xl border border-gray-200 dark:border-gray-800">
-                <input type="text" id="calendarQuickInput" placeholder="Bu güne hızlı öğe ekle..." class="flex-1 bg-transparent border-none outline-none text-xs text-gray-900 dark:text-gray-100">
-                <select id="calendarQuickType" class="bg-white dark:bg-cardBg text-xs border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1 outline-none">
-                    <option value="task">Görev</option>
-                    <option value="idea">Not</option>
-                    <option value="event">Randevu</option>
-                </select>
-                <button onclick="addCalendarQuickItem()" class="bg-accent text-white text-xs px-3 py-1 rounded-lg font-bold">Ekle</button>
-            </div>
-
-            <div id="calendarModalItemsList" class="flex flex-col gap-2.5 max-h-[40vh] overflow-y-auto"></div>
-            
+            <div id="calendarModalItemsList" class="flex flex-col gap-2.5 max-h-[50vh] overflow-y-auto"></div>
             <div class="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-800 text-xs">
                 <button onclick="jumpToStreamDateFromModal()" class="bg-accent/20 hover:bg-accent text-accent hover:text-white px-3.5 py-2 rounded-xl transition-all font-medium cursor-pointer">Bu Güne Git & Ekle</button>
                 <button onclick="closeCalendarDayModal()" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-inputBg text-gray-700 dark:text-gray-300 transition-all cursor-pointer">Kapat</button>
@@ -263,12 +277,49 @@
         </div>
     </div>
 
-    <!-- Ayarlar Modalı -->
+    <!-- Etkinlik Düzenleme Modalı -->
+    <div id="itemModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
+                <h3 class="font-bold text-gray-900 dark:text-white text-base">Etkinlik Düzenle</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <input type="hidden" id="modalItemId">
+            <div class="flex flex-col gap-3 text-xs">
+                <div>
+                    <label class="text-gray-500 dark:text-gray-400 block mb-1">İçerik</label>
+                    <input type="text" id="modalContent" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-900 dark:text-gray-200 outline-none focus:border-accent text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-gray-500 dark:text-gray-400 block mb-1">Tür</label>
+                        <select id="modalType" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-900 dark:text-gray-200 outline-none focus:border-accent">
+                            <option value="task">Görev</option>
+                            <option value="reminder">Hatırlatıcı</option>
+                            <option value="goal">Hedef</option>
+                            <option value="idea">Not</option>
+                            <option value="event">Randevu/Etkinlik</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-gray-500 dark:text-gray-400 block mb-1">Tarih & Saat</label>
+                        <input type="datetime-local" id="modalDate" class="w-full bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-2 text-gray-900 dark:text-gray-200 outline-none focus:border-accent">
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-gray-200 dark:border-gray-800">
+                <button onclick="closeModal()" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-inputBg text-gray-700 dark:text-gray-300 transition-all cursor-pointer text-xs">İptal</button>
+                <button onclick="saveModalItem()" class="px-4 py-2 rounded-xl bg-accent hover:bg-accentHover text-white font-bold transition-all cursor-pointer text-xs">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ayarlar & Yedekleme Modalı -->
     <div id="settingsModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
                 <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
-                    <i class="fa-solid fa-sliders text-accent"></i> CoreOS Sistem Ayarları
+                    <i class="fa-solid fa-sliders text-accent"></i> CoreOS Sistem Ayarları & Profil
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
@@ -314,500 +365,540 @@
         let userProfile = JSON.parse(localStorage.getItem('nexus_user_profile')) || { name: 'CoreOS', badge: 'PRO', mood: '⚡' };
         let currentTheme = localStorage.getItem('nexus_theme') || 'dark';
 
-        let items = JSON.parse(localStorage.getItem('nexus_items')) || [];
-        let currentFilter = 'all';
-        let currentView = 'stream';
-        let activeDate = new Date().toISOString().split('T')[0];
-        let pomodoroInterval = null;
-        let pomodoroTime = 25 * 60;
-        let pomodoroRunning = false;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateThemeUI();
-            applyUserProfile();
-            document.getElementById('streamDateInput').value = activeDate;
-            updateDateLabel();
-            render();
-            
-            document.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-                    e.preventDefault();
-                    document.getElementById('streamInput').focus();
-                }
-            });
-        });
-
         function applyUserProfile() {
-            document.getElementById('appTitleDisplay').childNodes[0].nodeValue = userProfile.name + ' ';
-            document.getElementById('headerProfileBadge').innerText = userProfile.badge;
+            document.getElementById('appTitleDisplay').innerHTML = `${userProfile.name} <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="headerProfileBadge">${userProfile.badge}</span>`;
             document.getElementById('profileNameBtn').innerText = userProfile.name;
-            setMood(userProfile.mood, false);
         }
+        applyUserProfile();
+
+        function applyTheme() {
+            const root = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            if (currentTheme === 'light') {
+                root.classList.remove('dark');
+                themeIcon.className = "fa-solid fa-sun text-neonAmber";
+            } else {
+                root.classList.add('dark');
+                themeIcon.className = "fa-solid fa-moon text-accent";
+            }
+        }
+        applyTheme();
 
         function toggleTheme() {
             currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
             localStorage.setItem('nexus_theme', currentTheme);
-            updateThemeUI();
+            applyTheme();
         }
 
-        function updateThemeUI() {
-            const root = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            if (currentTheme === 'dark') {
-                root.classList.add('dark');
-                icon.className = 'fa-solid fa-moon text-accent';
-            } else {
-                root.classList.remove('dark');
-                icon.className = 'fa-solid fa-sun text-neonAmber';
+        function setMood(mood) {
+            userProfile.mood = mood;
+            localStorage.setItem('nexus_user_profile', JSON.stringify(userProfile));
+            updateMoodDisplay();
+        }
+
+        function updateMoodDisplay() {
+            ['🔥', '⚡', '💡', '☕'].forEach(m => {
+                const btn = document.getElementById(`mood-btn-${m}`);
+                if (btn) {
+                    if (m === userProfile.mood) {
+                        btn.className = "text-xl scale-125 font-bold transition-all cursor-pointer filter drop-shadow-[0_0_8px_rgba(99,102,241,0.8)]";
+                    } else {
+                        btn.className = "text-sm opacity-50 hover:opacity-100 transition-all cursor-pointer";
+                    }
+                }
+            });
+        }
+
+        let items = JSON.parse(localStorage.getItem('nexus_items')) || [
+            { id: 1, content: "CoreOS Komuta Merkezi yapılandırıldı #sistem", type: "idea", status: "active", date: new Date().toISOString().split('T')[0], time: "09:00" },
+            { id: 2, content: "Haftalık stratejik planlama gözden geçirilecek #is", type: "task", status: "active", date: new Date().toISOString().split('T')[0], time: "10:30" }
+        ];
+
+        let currentMainView = 'stream';
+        let currentFilter = 'all';
+        let selectedTagFilter = null;
+        let streamSelectedDate = new Date().toISOString().split('T')[0];
+        let calendarSelectedDateStr = null;
+
+        function formatDateLabel(dateStr) {
+            const todayStr = new Date().toISOString().split('T')[0];
+            if (dateStr === todayStr) return "Bugün";
+            const [y, m, d] = dateStr.split('-');
+            return new Date(y, m - 1, d).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'short' });
+        }
+
+        function updateDateLabelDisplay() {
+            document.getElementById('activeDateLabel').innerText = formatDateLabel(streamSelectedDate);
+            const todayStr = new Date().toISOString().split('T')[0];
+            const resetBtn = document.getElementById('todayResetBtn');
+            if (streamSelectedDate !== todayStr) resetBtn.classList.remove('hidden');
+            else resetBtn.classList.add('hidden');
+            document.getElementById('streamDateInput').value = streamSelectedDate;
+        }
+        updateDateLabelDisplay();
+
+        document.getElementById('streamDateInput').addEventListener('change', (e) => {
+            if (e.target.value) {
+                streamSelectedDate = e.target.value;
+                updateDateLabelDisplay();
+                renderMainView();
             }
+        });
+
+        function changeStreamDate(days) {
+            const [y, m, d] = streamSelectedDate.split('-').map(Number);
+            const dt = new Date(y, m - 1, d + days);
+            streamSelectedDate = dt.toISOString().split('T')[0];
+            updateDateLabelDisplay();
+            renderMainView();
         }
 
-        function handleKeyDown(e) {
-            if (e.key === 'Enter') addStreamItem();
+        function resetToToday() {
+            streamSelectedDate = new Date().toISOString().split('T')[0];
+            updateDateLabelDisplay();
+            renderMainView();
         }
+
+        function switchMainView(view) {
+            currentMainView = view;
+            ['stream', 'kanban', 'pool', 'calendar'].forEach(v => {
+                const btn = document.getElementById(`nav-${v}`);
+                const btnM = document.getElementById(`nav-${v}-m`);
+                if (btn) btn.className = v === view ? "px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all shadow-sm cursor-pointer" : "px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1";
+                if (btnM) btnM.className = v === view ? "py-1.5 rounded-lg bg-accent text-white font-medium" : "py-1.5 rounded-lg text-gray-600 dark:text-gray-400";
+            });
+
+            const captureSec = document.getElementById('captureSection');
+            const filterSec = document.getElementById('filterSection');
+            const tagSec = document.getElementById('tagCloudSection');
+
+            if (view === 'stream') {
+                captureSec.style.display = 'flex';
+                filterSec.style.display = 'flex';
+                tagSec.style.display = 'flex';
+            } else if (view === 'pool') {
+                captureSec.style.display = 'flex';
+                filterSec.style.display = 'none';
+                tagSec.style.display = 'flex';
+            } else {
+                captureSec.style.display = 'none';
+                filterSec.style.display = 'none';
+                tagSec.style.display = 'none';
+            }
+            renderMainView();
+        }
+
+        function handleKeyDown(event) { if (event.key === 'Enter') addStreamItem(); }
 
         function addStreamItem() {
             const input = document.getElementById('streamInput');
-            const text = input.value.trim();
-            if (!text) return;
+            const content = input.value.trim();
+            if (!content) return;
 
+            const time = document.getElementById('streamTime').value || "09:00";
             const type = document.getElementById('streamType').value;
-            const time = document.getElementById('streamTime').value;
-            const selectedDate = document.getElementById('streamDateInput').value;
+            let date = streamSelectedDate;
+            if (currentMainView === 'pool') date = null;
 
-            const tags = (text.match(/#[\wĞÜŞİÖÇğüşiöç]+/g) || []).map(t => t.replace('#', ''));
-
-            const newItem = {
-                id: Date.now().toString(),
-                content: text,
-                type: type,
-                status: 'active',
-                date: selectedDate || null,
-                time: time,
-                tags: tags,
-                createdAt: new Date().toISOString()
-            };
-
-            items.unshift(newItem);
+            items.unshift({ id: Date.now(), content, type, status: 'active', date, time });
             saveAndRender();
             input.value = '';
+            input.focus();
         }
 
         function saveAndRender() {
             localStorage.setItem('nexus_items', JSON.stringify(items));
-            render();
-        }
-
-        function switchMainView(view) {
-            currentView = view;
-            ['stream', 'kanban', 'pool', 'calendar'].forEach(v => {
-                const btn = document.getElementById(`nav-${v}`);
-                const btnM = document.getElementById(`nav-${v}-m`);
-                if (btn) btn.className = v === view ? 'px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all shadow-sm' : 'px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-white transition-all cursor-pointer';
-                if (btnM) btnM.className = v === view ? 'py-1.5 rounded-lg bg-accent text-white' : 'py-1.5 rounded-lg text-gray-600 dark:text-gray-400';
-            });
-            render();
-        }
-
-        function setFilter(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.className = 'filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer whitespace-nowrap';
-            });
-            const activeBtn = document.getElementById(`filter-${filter}`);
-            if (activeBtn) activeBtn.className = 'filter-btn px-3.5 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap';
-            render();
-        }
-
-        function render() {
+            renderMainView();
             updateStats();
             renderTagCloud();
-            const container = document.getElementById('mainContainer');
-            container.innerHTML = '';
-
-            if (currentView === 'stream') renderStreamView(container);
-            else if (currentView === 'kanban') renderKanbanView(container);
-            else if (currentView === 'pool') renderPoolView(container);
-            else if (currentView === 'calendar') renderCalendarView(container);
-        }
-
-        function renderStreamView(container) {
-            const filtered = getFilteredItems().filter(i => i.date === activeDate);
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-gray-500 text-xs">Bu tarih için kayıt bulunamadı.</div>`;
-                return;
-            }
-            filtered.forEach(item => container.appendChild(createItemCard(item)));
-        }
-
-        function renderKanbanView(container) {
-            const kanbanWrapper = document.createElement('div');
-            kanbanWrapper.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
-
-            const statuses = [
-                { id: 'active', title: 'Yapılacaklar', color: 'border-accent' },
-                { id: 'completed', title: 'Tamamlananlar', color: 'border-neonGreen' },
-                { id: 'abandoned', title: 'Er ertelenen / İptal', color: 'border-neonRed' }
-            ];
-
-            statuses.forEach(status => {
-                const col = document.createElement('div');
-                col.className = `bg-white dark:bg-cardBg border-t-4 ${status.color} border-x border-b border-gray-200 dark:border-gray-800 rounded-2xl p-4 flex flex-col gap-3 min-h-[300px]`;
-                col.innerHTML = `<h3 class="font-bold text-sm text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-800 pb-2">${status.title}</h3>`;
-                
-                const colItems = getFilteredItems().filter(i => i.status === status.id);
-                colItems.forEach(item => col.appendChild(createItemCard(item)));
-                
-                kanbanWrapper.appendChild(col);
-            });
-
-            container.appendChild(kanbanWrapper);
-        }
-
-        function renderPoolView(container) {
-            const poolItems = getFilteredItems().filter(i => !i.date);
-            if (poolItems.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-gray-500 text-xs">Tarihsiz havuzda hiçbir öge bulunmuyor.</div>`;
-                return;
-            }
-            poolItems.forEach(item => container.appendChild(createItemCard(item)));
-        }
-
-        function renderCalendarView(container) {
-            const calendarWrapper = document.createElement('div');
-            calendarWrapper.className = 'bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col gap-4';
-
-            const now = new Date(activeDate);
-            const year = now.getFullYear();
-            const month = now.getMonth();
-
-            const monthNames = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const firstDayIndex = new Date(year, month, 1).getDay();
-            const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
-
-            calendarWrapper.innerHTML = `
-                <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
-                    <h2 class="font-bold text-base text-gray-900 dark:text-white flex items-center gap-2">
-                        <i class="fa-solid fa-calendar-days text-accent"></i> ${monthNames[month]} ${year}
-                    </h2>
-                    <div class="flex gap-1 text-xs">
-                        <button onclick="changeCalendarMonth(-1)" class="px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-all cursor-pointer"><i class="fa-solid fa-chevron-left"></i> Önceki</button>
-                        <button onclick="changeCalendarMonth(1)" class="px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-all cursor-pointer">Sonraki <i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-7 gap-1 text-center font-bold text-[11px] text-gray-400 py-1">
-                    <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
-                </div>
-                <div id="calendarGrid" class="grid grid-cols-7 gap-1.5"></div>
-            `;
-
-            container.appendChild(calendarWrapper);
-            const grid = document.getElementById('calendarGrid');
-
-            for (let i = 0; i < adjustedFirstDay; i++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.className = 'h-20 sm:h-24 rounded-xl bg-gray-50/50 dark:bg-inputBg/20 border border-transparent';
-                grid.appendChild(emptyCell);
-            }
-
-            const todayStr = new Date().toISOString().split('T')[0];
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const dayItems = items.filter(i => i.date === dayString);
-                const isToday = dayString === todayStr;
-
-                const cell = document.createElement('div');
-                cell.onclick = () => openCalendarDayModal(dayString);
-                cell.className = `h-20 sm:h-24 p-1.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between overflow-hidden ${
-                    isToday 
-                        ? 'border-accent bg-accent/5 font-bold' 
-                        : 'border-gray-200 dark:border-gray-800 bg-white dark:bg-cardBg hover:border-accent/50'
-                }`;
-
-                let badgeHTML = '';
-                if (dayItems.length > 0) {
-                    const taskCount = dayItems.filter(i => i.type === 'task').length;
-                    const ideaCount = dayItems.filter(i => i.type === 'idea').length;
-                    badgeHTML = `
-                        <div class="flex flex-col gap-0.5 text-[9px]">
-                            ${taskCount ? `<span class="bg-accent/20 text-accent px-1 rounded truncate">✓ ${taskCount} Görev</span>` : ''}
-                            ${ideaCount ? `<span class="bg-neonAmber/20 text-neonAmber px-1 rounded truncate">💡 ${ideaCount} Not</span>` : ''}
-                            ${(dayItems.length - taskCount - ideaCount) > 0 ? `<span class="bg-gray-200 dark:bg-gray-800 text-gray-500 px-1 rounded truncate">+${dayItems.length - taskCount - ideaCount} Diğer</span>` : ''}
-                        </div>
-                    `;
-                }
-
-                cell.innerHTML = `
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="${isToday ? 'w-5 h-5 rounded-full bg-accent text-white flex items-center justify-center text-[10px]' : 'text-gray-700 dark:text-gray-300'}">${day}</span>
-                        ${dayItems.length ? `<span class="w-1.5 h-1.5 rounded-full bg-accent"></span>` : ''}
-                    </div>
-                    ${badgeHTML}
-                `;
-                grid.appendChild(cell);
-            }
-        }
-
-        function createItemCard(item) {
-            const card = document.createElement('div');
-            card.className = `bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-sm transition-all hover:border-accent/40 ${item.status === 'completed' ? 'opacity-50 line-through' : ''}`;
-            
-            const typeIcons = { idea: '💡', task: '✅', goal: '🎯', reminder: '⏰', event: '🤝' };
-            
-            card.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleItemStatus('${item.id}')" class="w-6 h-6 rounded-lg border border-gray-300 dark:border-gray-700 flex items-center justify-center text-xs cursor-pointer">
-                        ${item.status === 'completed' ? '<i class="fa-solid fa-check text-neonGreen"></i>' : ''}
-                    </button>
-                    <div>
-                        <div class="text-xs font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                            <span>${typeIcons[item.type] || '📌'}</span>
-                            <span>${item.content}</span>
-                        </div>
-                        <div class="text-[10px] text-gray-400 flex items-center gap-2 mt-1">
-                            ${item.time ? `<span><i class="fa-regular fa-clock"></i> ${item.time}</span>` : ''}
-                            ${item.tags.map(t => `<span class="text-accent">#${t}</span>`).join(' ')}
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center gap-1">
-                    <button onclick="deleteItem('${item.id}')" class="text-gray-400 hover:text-neonRed p-1 text-xs cursor-pointer"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `;
-            return card;
-        }
-
-        function toggleItemStatus(id) {
-            const item = items.find(i => i.id === id);
-            if (item) {
-                item.status = item.status === 'completed' ? 'active' : 'completed';
-                saveAndRender();
-            }
-        }
-
-        function deleteItem(id) {
-            items = items.filter(i => i.id !== id);
-            saveAndRender();
-        }
-
-        function clearCompleted() {
-            items = items.filter(i => i.status !== 'completed');
-            saveAndRender();
-        }
-
-        function getFilteredItems() {
-            return items.filter(i => currentFilter === 'all' || i.type === currentFilter);
         }
 
         function updateStats() {
             const total = items.length;
             const completed = items.filter(i => i.status === 'completed').length;
-            const active = items.filter(i => i.status === 'active' && i.type === 'task').length;
+            const activeTasks = items.filter(i => i.status === 'active' && i.type === 'task').length;
             const ideas = items.filter(i => i.type === 'idea').length;
+            const abandoned = items.filter(i => i.status === 'abandoned').length;
 
-            document.getElementById('completionRate').innerText = `%${total ? Math.round((completed / total) * 100) : 0} Tamamlandı`;
-            document.getElementById('activeTaskCount').innerText = `${active} Görev`;
+            document.getElementById('completionRate').innerText = `%${total > 0 ? Math.round((completed / total) * 100) : 0} Tamamlandı`;
+            document.getElementById('activeTaskCount').innerText = `${activeTasks} Görev`;
             document.getElementById('ideaCount').innerText = `${ideas} Not`;
             document.getElementById('badgeCompletedCount').innerText = completed;
-            document.getElementById('badgeAbandonedCount').innerText = items.filter(i => i.status === 'abandoned').length;
+            document.getElementById('badgeAbandonedCount').innerText = abandoned;
+            updateMoodDisplay();
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            selectedTagFilter = null;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.className = "filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap");
+            const activeBtn = document.getElementById(`filter-${filter}`);
+            if (activeBtn) activeBtn.className = "filter-btn px-3.5 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap";
+            renderMainView();
+        }
+
+        function filterByStat(statType) {
+            switchMainView('stream');
+            if (statType === 'completed') currentFilter = 'completed';
+            else if (statType === 'active') currentFilter = 'task';
+            else if (statType === 'idea') currentFilter = 'idea';
+            renderMainView();
         }
 
         function renderTagCloud() {
             const container = document.getElementById('tagCloudContainer');
-            const allTags = [...new Set(items.flatMap(i => i.tags))];
-            container.innerHTML = allTags.length ? allTags.map(t => `<span class="bg-gray-100 dark:bg-inputBg border border-gray-200 dark:border-gray-800 px-2 py-0.5 rounded-md text-gray-400">#${t}</span>`).join('') : '<span class="text-gray-500 text-[10px]">Etiket yok</span>';
-        }
-
-        function setMood(emoji, save = true) {
-            userProfile.mood = emoji;
-            ['🔥', '⚡', '💡', '☕'].forEach(m => {
-                const btn = document.getElementById(`mood-btn-${m}`);
-                if (btn) btn.style.transform = m === emoji ? 'scale(1.3)' : 'scale(1)';
+            container.innerHTML = '';
+            const tags = new Set();
+            items.forEach(item => {
+                const matches = item.content.match(/#([a-zA-Z0-9ğüşıöçĞÜŞİÖÇ_]+)/g);
+                if (matches) matches.forEach(t => tags.add(t));
             });
-            if (save) localStorage.setItem('nexus_user_profile', JSON.stringify(userProfile));
+
+            if (tags.size === 0) {
+                container.innerHTML = `<span class="text-gray-400 text-[11px]">Etiket bulunmuyor.</span>`;
+                return;
+            }
+
+            tags.forEach(tag => {
+                const btn = document.createElement('button');
+                const isSelected = selectedTagFilter === tag;
+                btn.className = `px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${isSelected ? 'bg-accent text-white shadow-sm' : 'bg-gray-100 dark:bg-inputBg text-gray-600 dark:text-gray-300 hover:border-accent border border-gray-200 dark:border-gray-800'}`;
+                btn.innerText = tag;
+                btn.onclick = () => {
+                    selectedTagFilter = isSelected ? null : tag;
+                    renderMainView();
+                    renderTagCloud();
+                };
+                container.appendChild(btn);
+            });
         }
 
-        function changeStreamDate(days) {
-            const d = new Date(activeDate);
-            d.setDate(d.getDate() + days);
-            activeDate = d.toISOString().split('T')[0];
-            document.getElementById('streamDateInput').value = activeDate;
-            updateDateLabel();
-            render();
+        function renderMainView() {
+            const container = document.getElementById('mainContainer');
+            container.innerHTML = '';
+
+            if (currentMainView === 'stream') {
+                let filtered = items.filter(i => i.date === streamSelectedDate);
+                if (selectedTagFilter) filtered = filtered.filter(i => i.content.includes(selectedTagFilter));
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'completed') filtered = filtered.filter(i => i.status === 'completed');
+                    else if (currentFilter === 'active') filtered = filtered.filter(i => i.status === 'active');
+                    else filtered = filtered.filter(i => i.type === currentFilter);
+                }
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-8 text-center text-gray-400 flex flex-col items-center gap-3"><i class="fa-solid fa-feather text-3xl text-accent/40"></i><p class="text-sm">Bu filtreye uygun kayıt bulunamadı.</p></div>`;
+                    return;
+                }
+                filtered.forEach(item => container.appendChild(createItemCard(item)));
+
+            } else if (currentMainView === 'pool') {
+                let pooled = items.filter(i => !i.date);
+                if (selectedTagFilter) pooled = pooled.filter(i => i.content.includes(selectedTagFilter));
+                if (pooled.length === 0) {
+                    container.innerHTML = `<div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-8 text-center text-gray-400 flex flex-col items-center gap-3"><i class="fa-solid fa-water text-3xl text-neonAmber/40"></i><p class="text-sm">Havuzunuz tertemiz!</p></div>`;
+                    return;
+                }
+                pooled.forEach(item => container.appendChild(createItemCard(item)));
+
+            } else if (currentMainView === 'kanban') {
+                renderKanbanView(container);
+            } else if (currentMainView === 'calendar') {
+                renderCalendarView(container);
+            }
+            updateStats();
         }
 
-        function changeCalendarMonth(offset) {
-            const d = new Date(activeDate);
-            d.setMonth(d.getMonth() + offset);
-            activeDate = d.toISOString().split('T')[0];
-            updateDateLabel();
-            render();
+        function createItemCard(item) {
+            const card = document.createElement('div');
+            const isCompleted = item.status === 'completed';
+            let typeIcon = 'fa-lightbulb text-neonAmber', typeBg = 'bg-neonAmber/10 border-neonAmber/20', typeLabel = 'Not';
+
+            if (item.type === 'task') { typeIcon = 'fa-check-to-slot text-accent'; typeBg = 'bg-accent/10 border-accent/20'; typeLabel = 'Görev'; }
+            else if (item.type === 'goal') { typeIcon = 'fa-bullseye text-neonPurple'; typeBg = 'bg-neonPurple/10 border-neonPurple/20'; typeLabel = 'Hedef'; }
+            else if (item.type === 'reminder') { typeIcon = 'fa-clock text-neonGreen'; typeBg = 'bg-neonGreen/10 border-neonGreen/20'; typeLabel = 'Hatırlatıcı'; }
+            else if (item.type === 'event') { typeIcon = 'fa-handshake text-neonAmber'; typeBg = 'bg-neonAmber/10 border-neonAmber/20'; typeLabel = 'Randevu'; }
+
+            card.className = `bg-white dark:bg-cardBg border ${isCompleted ? 'border-neonGreen/40 opacity-75' : 'border-gray-200 dark:border-gray-800 hover:border-accent/50'} rounded-2xl p-4 flex items-center justify-between gap-4 transition-all shadow-sm`;
+
+            let formattedContent = escapeHtml(item.content).replace(/#([a-zA-Z0-9ğüşıöçĞÜŞİÖÇ_]+)/g, '<span class="text-accent bg-accent/10 px-1.5 py-0.5 rounded-md text-[11px] font-medium">#$1</span>');
+
+            card.innerHTML = `
+                <div class="flex items-center gap-3.5 flex-1 min-w-0">
+                    <div class="w-10 h-10 rounded-xl border ${typeBg} flex items-center justify-center shrink-0">
+                        <i class="fa-solid ${typeIcon} text-sm"></i>
+                    </div>
+                    <div class="flex flex-col gap-0.5 min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">${typeLabel}</span>
+                            ${item.time ? `<span class="text-[10px] font-mono bg-gray-100 dark:bg-inputBg text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">${item.time}</span>` : ''}
+                            ${item.date ? `<span class="text-[10px] text-gray-400"><i class="fa-solid fa-calendar-days mr-1"></i>${item.date}</span>` : '<span class="text-[10px] text-neonAmber font-medium"><i class="fa-solid fa-water mr-1"></i>Havuzda</span>'}
+                        </div>
+                        <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate ${isCompleted ? 'line-through text-gray-400' : ''}">${formattedContent}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="toggleComplete(${item.id})" class="w-8 h-8 rounded-xl bg-gray-50 dark:bg-inputBg hover:bg-neonGreen/20 text-gray-400 hover:text-neonGreen border border-gray-200 dark:border-gray-800 flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid ${isCompleted ? 'fa-rotate-left' : 'fa-check'} text-xs"></i></button>
+                    <button onclick="openEditModal(${item.id})" class="w-8 h-8 rounded-xl bg-gray-50 dark:bg-inputBg hover:bg-accent/20 text-gray-400 hover:text-accent border border-gray-200 dark:border-gray-800 flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-pen text-xs"></i></button>
+                    <button onclick="deleteItem(${item.id})" class="w-8 h-8 rounded-xl bg-gray-50 dark:bg-inputBg hover:bg-red-500/20 text-gray-400 hover:text-red-500 border border-gray-200 dark:border-gray-800 flex items-center justify-center transition-all cursor-pointer"><i class="fa-solid fa-trash text-xs"></i></button>
+                </div>
+            `;
+            return card;
         }
 
-        function resetToToday() {
-            activeDate = new Date().toISOString().split('T')[0];
-            document.getElementById('streamDateInput').value = activeDate;
-            updateDateLabel();
-            render();
+        function escapeHtml(text) { return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+        function toggleComplete(id) { const item = items.find(i => i.id === id); if (item) { item.status = item.status === 'completed' ? 'active' : 'completed'; saveAndRender(); } }
+        function deleteItem(id) { items = items.filter(i => i.id !== id); saveAndRender(); }
+        function clearCompleted() { items = items.filter(i => i.status !== 'completed'); saveAndRender(); }
+
+        function renderKanbanView(container) {
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-4 flex flex-col gap-3">
+                        <h4 class="font-bold text-xs uppercase text-neonAmber tracking-wider">Yapılacaklar</h4>
+                        <div id="kanban-active" class="flex flex-col gap-2.5 min-h-[250px]"></div>
+                    </div>
+                    <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-4 flex flex-col gap-3">
+                        <h4 class="font-bold text-xs uppercase text-accent tracking-wider">Devam Eden</h4>
+                        <div id="kanban-inProgress" class="flex flex-col gap-2.5 min-h-[250px]"></div>
+                    </div>
+                    <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-4 flex flex-col gap-3">
+                        <h4 class="font-bold text-xs uppercase text-neonGreen tracking-wider">Tamamlanan</h4>
+                        <div id="kanban-completed" class="flex flex-col gap-2.5 min-h-[250px]"></div>
+                    </div>
+                </div>
+            `;
+            const activeCol = document.getElementById('kanban-active'), inProgressCol = document.getElementById('kanban-inProgress'), completedCol = document.getElementById('kanban-completed');
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl p-3 flex flex-col gap-2 text-xs";
+                card.innerHTML = `<div class="flex items-center justify-between"><span class="font-bold text-accent">${item.type}</span><div class="flex items-center gap-1"><button onclick="moveKanban(${item.id}, 'prev')"><i class="fa-solid fa-chevron-left"></i></button><button onclick="moveKanban(${item.id}, 'next')"><i class="fa-solid fa-chevron-right"></i></button></div></div><p class="font-medium">${escapeHtml(item.content)}</p>`;
+                if (item.status === 'completed') completedCol.appendChild(card);
+                else if (item.status === 'inProgress') inProgressCol.appendChild(card);
+                else activeCol.appendChild(card);
+            });
         }
 
-        function updateDateLabel() {
-            const today = new Date().toISOString().split('T')[0];
-            const isToday = activeDate === today;
-            document.getElementById('activeDateLabel').innerText = isToday ? 'Bugün' : activeDate;
-            document.getElementById('todayResetBtn').classList.toggle('hidden', isToday);
+        function moveKanban(id, dir) {
+            const item = items.find(i => i.id === id);
+            if (!item) return;
+            if (dir === 'next') { if (item.status === 'active') item.status = 'inProgress'; else if (item.status === 'inProgress') item.status = 'completed'; }
+            else { if (item.status === 'completed') item.status = 'inProgress'; else if (item.status === 'inProgress') item.status = 'active'; }
+            saveAndRender();
+        }
+
+        function renderCalendarView(container) {
+            const now = new Date(), year = now.getFullYear(), month = now.getMonth(), firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate();
+            container.innerHTML = `<div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-6 flex flex-col gap-6"><h3 class="font-bold text-base"><i class="fa-solid fa-calendar-days text-accent"></i> Takvim</h3><div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-gray-400"><span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span></div><div class="grid grid-cols-7 gap-2" id="calendarGrid"></div></div>`;
+            const grid = document.getElementById('calendarGrid');
+            for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) grid.appendChild(document.createElement('div'));
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const dayItems = items.filter(i => i.date === dayStr);
+                const cell = document.createElement('div');
+                cell.className = "min-h-[85px] bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl p-2 cursor-pointer hover:border-accent text-xs flex flex-col justify-between";
+                cell.onclick = () => openCalendarDayModal(dayStr);
+                
+                let indicatorHtml = '';
+                if (dayItems.length > 0) {
+                    indicatorHtml = `<span class="mt-1 bg-accent/20 text-accent font-bold px-1.5 py-0.5 rounded text-[10px] text-center">${dayItems.length} kayıt</span>`;
+                }
+                cell.innerHTML = `<div class="flex items-center justify-between"><span class="font-bold">${d}</span></div>${indicatorHtml}`;
+                grid.appendChild(cell);
+            }
         }
 
         function openCalendarDayModal(dateStr) {
-            activeDate = dateStr;
-            document.getElementById('streamDateInput').value = activeDate;
-            updateDateLabel();
-
-            const modalTitle = document.getElementById('calendarModalDateTitle');
-            if (modalTitle) modalTitle.innerText = `${dateStr} Detayları`;
+            calendarSelectedDateStr = dateStr;
+            document.getElementById('calendarModalDateTitle').innerText = formatDateLabel(dateStr);
+            const listContainer = document.getElementById('calendarModalItemsList');
+            listContainer.innerHTML = '';
             
-            refreshCalendarModalList();
-            document.getElementById('calendarDayModal').classList.remove('hidden');
-        }
-
-        function addCalendarQuickItem() {
-            const input = document.getElementById('calendarQuickInput');
-            const text = input.value.trim();
-            if (!text) return;
-
-            const type = document.getElementById('calendarQuickType').value;
-            const tags = (text.match(/#[\wĞÜŞİÖÇğüşiöç]+/g) || []).map(t => t.replace('#', ''));
-
-            const newItem = {
-                id: Date.now().toString(),
-                content: text,
-                type: type,
-                status: 'active',
-                date: activeDate,
-                time: '09:00',
-                tags: tags,
-                createdAt: new Date().toISOString()
-            };
-
-            items.unshift(newItem);
-            saveAndRender();
-            input.value = '';
-            refreshCalendarModalList();
-        }
-
-        function refreshCalendarModalList() {
-            const dayItems = items.filter(i => i.date === activeDate);
-            const modalList = document.getElementById('calendarModalItemsList');
-            if (modalList) {
-                modalList.innerHTML = dayItems.length === 0 
-                    ? '<p class="text-xs text-gray-400 py-4 text-center">Bu güne ait herhangi bir kayıt yok.</p>'
-                    : '';
+            const dayItems = items.filter(i => i.date === dateStr);
+            if (dayItems.length === 0) {
+                listContainer.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">Bu tarihe ait kayıt bulunmuyor.</p>`;
+            } else {
                 dayItems.forEach(item => {
-                    modalList.appendChild(createItemCard(item));
+                    const el = document.createElement('div');
+                    el.className = "bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 p-2.5 rounded-xl flex items-center justify-between text-xs";
+                    el.innerHTML = `<span><b>[${item.type}]</b> ${escapeHtml(item.content)}</span>`;
+                    listContainer.appendChild(el);
                 });
             }
+            document.getElementById('calendarDayModal').classList.remove('hidden');
+            document.getElementById('calendarDayModal').classList.add('flex');
         }
 
         function closeCalendarDayModal() {
             document.getElementById('calendarDayModal').classList.add('hidden');
+            document.getElementById('calendarDayModal').classList.remove('flex');
         }
 
         function jumpToStreamDateFromModal() {
-            closeCalendarDayModal();
-            switchMainView('stream');
-        }
-
-        function togglePomodoroModal() {
-            document.getElementById('pomodoroModal').classList.toggle('hidden');
-        }
-
-        function startPomodoro() {
-            if (pomodoroRunning) {
-                clearInterval(pomodoroInterval);
-                pomodoroRunning = false;
-                document.getElementById('pomoStartBtn').innerText = 'Başlat';
-            } else {
-                pomodoroRunning = true;
-                document.getElementById('pomoStartBtn').innerText = 'Durdur';
-                pomodoroInterval = setInterval(() => {
-                    pomodoroTime--;
-                    updatePomoDisplay();
-                    if (pomodoroTime <= 0) {
-                        clearInterval(pomodoroInterval);
-                        alert('Pomodoro Süresi Doldu!');
-                        resetPomodoro();
-                    }
-                }, 1000);
+            if (calendarSelectedDateStr) {
+                streamSelectedDate = calendarSelectedDateStr;
+                updateDateLabelDisplay();
+                closeCalendarDayModal();
+                switchMainView('stream');
             }
         }
 
-        function resetPomodoro() {
-            clearInterval(pomodoroInterval);
-            pomodoroRunning = false;
-            pomodoroTime = parseInt(document.getElementById('pomoCustomMinutes').value) * 60;
-            document.getElementById('pomoStartBtn').innerText = 'Başlat';
-            updatePomoDisplay();
+        function openEditModal(id) {
+            const item = items.find(i => i.id === id);
+            if (!item) return;
+            document.getElementById('modalItemId').value = item.id;
+            document.getElementById('modalContent').value = item.content;
+            document.getElementById('modalType').value = item.type;
+            document.getElementById('modalDate').value = item.date ? `${item.date}T${item.time || '09:00'}` : '';
+            document.getElementById('itemModal').classList.remove('hidden');
+            document.getElementById('itemModal').classList.add('flex');
         }
 
-        function updatePomoCustomTime(val) {
-            pomodoroTime = parseInt(val) * 60;
-            updatePomoDisplay();
+        function closeModal() { document.getElementById('itemModal').classList.add('hidden'); document.getElementById('itemModal').classList.remove('flex'); }
+
+        function saveModalItem() {
+            const id = Number(document.getElementById('modalItemId').value);
+            const item = items.find(i => i.id === id);
+            if (item) {
+                item.content = document.getElementById('modalContent').value.trim();
+                item.type = document.getElementById('modalType').value;
+                const dt = document.getElementById('modalDate').value;
+                if (dt) { const [d, t] = dt.split('T'); item.date = d; item.time = t; }
+                saveAndRender();
+            }
+            closeModal();
         }
 
-        function updatePomoDisplay() {
-            const m = Math.floor(pomodoroTime / 60).toString().padStart(2, '0');
-            const s = (pomodoroTime % 60).toString().padStart(2, '0');
-            const str = `${m}:${s}`;
-            document.getElementById('pomodoroDisplay').innerText = str;
-            document.getElementById('modalTimerDisplay').innerText = str;
+        function openSettingsModal() { 
+            document.getElementById('settingsAppName').value = userProfile.name; 
+            document.getElementById('settingsAppBadge').value = userProfile.badge; 
+            document.getElementById('settingsModal').classList.remove('hidden'); 
+            document.getElementById('settingsModal').classList.add('flex'); 
         }
-
-        function openSettingsModal() {
-            document.getElementById('settingsAppName').value = userProfile.name;
-            document.getElementById('settingsAppBadge').value = userProfile.badge;
-            document.getElementById('settingsModal').classList.remove('hidden');
-        }
-
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        }
-
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); document.getElementById('settingsModal').classList.remove('flex'); }
         function saveSettingsModal() {
-            userProfile.name = document.getElementById('settingsAppName').value;
-            userProfile.badge = document.getElementById('settingsAppBadge').value;
+            const name = document.getElementById('settingsAppName').value.trim();
+            const badge = document.getElementById('settingsAppBadge').value.trim();
+            if (name) userProfile.name = name;
+            if (badge) userProfile.badge = badge;
             localStorage.setItem('nexus_user_profile', JSON.stringify(userProfile));
             applyUserProfile();
             closeSettingsModal();
         }
 
         function exportData() {
-            const blob = new Blob([JSON.stringify({ items, userProfile }, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `CoreOS_Backup_${activeDate}.json`;
-            a.click();
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ userProfile, items }, null, 2));
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", `CoreOS_Backup.json`);
+            document.body.appendChild(dl); dl.click(); dl.remove();
         }
 
         function importData(e) {
             const reader = new FileReader();
-            reader.onload = (event) => {
-                const data = JSON.parse(event.target.result);
-                if (data.items) items = data.items;
-                if (data.userProfile) userProfile = data.userProfile;
-                saveAndRender();
-                applyUserProfile();
-                closeSettingsModal();
-            };
-            reader.readAsText(e.target.files[0]);
-        }
-
-        function resetData() {
-            if (confirm('Tüm veriler sıfırlanacak. Emin misiniz?')) {
-                localStorage.clear();
-                location.reload();
+            if (e.target.files[0]) {
+                reader.readAsText(e.target.files[0], "UTF-8");
+                reader.onload = (evt) => {
+                    try {
+                        const parsed = JSON.parse(evt.target.result);
+                        if (parsed.items) items = parsed.items;
+                        if (parsed.userProfile) userProfile = parsed.userProfile;
+                        saveAndRender();
+                        applyUserProfile();
+                        alert('Yüklendi!');
+                        closeSettingsModal();
+                    } catch (err) { alert('Hata!'); }
+                };
             }
         }
+
+        function resetData() { if (confirm('Sıfırlansın mı?')) { items = []; localStorage.removeItem('nexus_items'); saveAndRender(); closeSettingsModal(); } }
+
+        let pomoSeconds = 25 * 60, pomoInterval = null, pomoRunning = false;
+        
+        function updatePomoCustomTime(mins) {
+            const m = parseInt(mins);
+            if (!isNaN(m) && m > 0) {
+                pomoSeconds = m * 60;
+                document.getElementById('pomodoroDisplay').innerText = `${String(m).padStart(2, '0')}:00`;
+                document.getElementById('modalTimerDisplay').innerText = document.getElementById('pomodoroDisplay').innerText;
+            }
+        }
+
+        function playChimeSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 notesu hafif çınlama
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 1.2);
+            } catch(e) { console.log("Ses çalınamadı", e); }
+        }
+
+        function togglePomodoroModal() { document.getElementById('pomodoroModal').classList.toggle('hidden'); document.getElementById('pomodoroModal').classList.toggle('flex'); }
+        function startPomodoro() {
+            const btn = document.getElementById('pomoStartBtn');
+            if (!pomoRunning) {
+                pomoRunning = true; btn.innerText = 'Durdur';
+                pomoInterval = setInterval(() => {
+                    if (pomoSeconds > 0) {
+                        pomoSeconds--;
+                        const mStr = String(Math.floor(pomoSeconds / 60)).padStart(2, '0');
+                        const sStr = String(pomoSeconds % 60).padStart(2, '0');
+                        document.getElementById('pomodoroDisplay').innerText = `${mStr}:${sStr}`;
+                        document.getElementById('modalTimerDisplay').innerText = `${mStr}:${sStr}`;
+                    } else { 
+                        clearInterval(pomoInterval); 
+                        pomoRunning = false; 
+                        btn.innerText = 'Başlat'; 
+                        playChimeSound();
+                        alert('Pomodoro süresi bitti!'); 
+                    }
+                }, 1000);
+            } else { clearInterval(pomoInterval); pomoRunning = false; btn.innerText = 'Başlat'; }
+        }
+        function resetPomodoro() { 
+            clearInterval(pomoInterval); 
+            pomoRunning = false; 
+            const customMins = parseInt(document.getElementById('pomoCustomMinutes').value) || 25;
+            pomoSeconds = customMins * 60; 
+            document.getElementById('pomodoroDisplay').innerText = `${String(customMins).padStart(2, '0')}:00`; 
+            document.getElementById('modalTimerDisplay').innerText = document.getElementById('pomodoroDisplay').innerText;
+            document.getElementById('pomoStartBtn').innerText = 'Başlat';
+        }
+
+        function checkRemindersAndEvents() {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const upcoming = items.find(i => i.date === todayStr && i.status === 'active' && (i.type === 'reminder' || i.type === 'event'));
+            if (upcoming && !sessionStorage.getItem(`notified_${upcoming.id}`)) {
+                document.getElementById('popupTitle').innerText = upcoming.content;
+                document.getElementById('motivationModal').classList.remove('hidden');
+                document.getElementById('motivationModal').classList.add('flex');
+                sessionStorage.setItem(`notified_${upcoming.id}`, 'true');
+            }
+        }
+        function closeMotivationModal(completed) {
+            if (completed) { saveAndRender(); }
+            document.getElementById('motivationModal').classList.add('hidden');
+            document.getElementById('motivationModal').classList.remove('flex');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                switchMainView('stream');
+                document.getElementById('streamInput').focus();
+            }
+        });
+
+        renderMainView();
+        updateStats();
+        renderTagCloud();
+        setTimeout(checkRemindersAndEvents, 1500);
     </script>
 </body>
 </html>
