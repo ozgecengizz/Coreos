@@ -83,59 +83,59 @@
     </header>
 
     <!-- Ana İçerik Ekranı -->
-    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-6">
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
         
-        <!-- Üst İnce Hat Enerji/Mod Çubuğu ve Hemen Altındaki İstatistik Kartları -->
-        <section id="statsSection" class="flex flex-col gap-3">
+        <!-- Üst İnce Hat Enerji/Mod Çubuğu ve Küçültülmüş İstatistik Kartları -->
+        <section id="statsSection" class="flex flex-col gap-2.5">
             <!-- İnce Yatay Mod Çubuğu -->
-            <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-2xl px-4 py-2.5 flex items-center justify-between shadow-sm">
-                <span class="text-xs text-gray-400 font-medium flex items-center gap-1.5">
+            <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 rounded-xl px-3.5 py-2 flex items-center justify-between shadow-sm">
+                <span class="text-[11px] text-gray-400 font-medium flex items-center gap-1.5">
                     <i class="fa-solid fa-bolt text-accent"></i> Günlük Mod / Enerji:
                 </span>
-                <div class="flex items-center gap-4">
-                    <button onclick="setMood('🔥')" id="mood-btn-🔥" class="text-sm transition-all cursor-pointer hover:scale-125">🔥</button>
-                    <button onclick="setMood('⚡')" id="mood-btn-⚡" class="text-sm transition-all cursor-pointer hover:scale-125">⚡</button>
-                    <button onclick="setMood('💡')" id="mood-btn-💡" class="text-sm transition-all cursor-pointer hover:scale-125">💡</button>
-                    <button onclick="setMood('☕')" id="mood-btn-☕" class="text-sm transition-all cursor-pointer hover:scale-125">☕</button>
+                <div class="flex items-center gap-3.5">
+                    <button onclick="setMood('🔥')" id="mood-btn-🔥" class="text-xs transition-all cursor-pointer hover:scale-125">🔥</button>
+                    <button onclick="setMood('⚡')" id="mood-btn-⚡" class="text-xs transition-all cursor-pointer hover:scale-125">⚡</button>
+                    <button onclick="setMood('💡')" id="mood-btn-💡" class="text-xs transition-all cursor-pointer hover:scale-125">💡</button>
+                    <button onclick="setMood('☕')" id="mood-btn-☕" class="text-xs transition-all cursor-pointer hover:scale-125">☕</button>
                 </div>
             </div>
 
-            <!-- İstatistik Kartları (Tıklandığında ilgili bölüme götürür) -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div onclick="filterByStat('completed')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-accent/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
-                    <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-lg group-hover:scale-105 transition-transform">
+            <!-- Küçültülmüş İstatistik Kartları (Tıklandığında ilgili bölüme götürür) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div onclick="filterByStat('completed')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-accent/60 rounded-xl px-3.5 py-2.5 flex items-center gap-3 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                    <div class="w-9 h-9 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-sm group-hover:scale-105 transition-transform shrink-0">
                         <i class="fa-solid fa-fire-flame-curved"></i>
                     </div>
-                    <div>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Günlük Başarı <i class="fa-solid fa-arrow-pointer text-[10px] text-accent opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
-                        <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="completionRate">%0 Tamamlandı</h2>
+                    <div class="min-w-0">
+                        <span class="text-[10px] text-gray-500 dark:text-gray-400 font-medium block truncate">Günlük Başarı <i class="fa-solid fa-arrow-pointer text-[9px] text-accent opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
+                        <h2 class="text-base font-bold text-gray-900 dark:text-white truncate" id="completionRate">%0 Tamamlandı</h2>
                     </div>
                 </div>
 
-                <div onclick="filterByStat('active')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-neonGreen/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
-                    <div class="w-12 h-12 rounded-xl bg-neonGreen/10 border border-neonGreen/20 flex items-center justify-center text-neonGreen text-lg group-hover:scale-105 transition-transform">
+                <div onclick="filterByStat('active')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-neonGreen/60 rounded-xl px-3.5 py-2.5 flex items-center gap-3 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                    <div class="w-9 h-9 rounded-lg bg-neonGreen/10 border border-neonGreen/20 flex items-center justify-center text-neonGreen text-sm group-hover:scale-105 transition-transform shrink-0">
                         <i class="fa-solid fa-check-double"></i>
                     </div>
-                    <div>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Aktif Görevler <i class="fa-solid fa-arrow-pointer text-[10px] text-neonGreen opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
-                        <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="activeTaskCount">0 Görev</h2>
+                    <div class="min-w-0">
+                        <span class="text-[10px] text-gray-500 dark:text-gray-400 font-medium block truncate">Aktif Görevler <i class="fa-solid fa-arrow-pointer text-[9px] text-neonGreen opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
+                        <h2 class="text-base font-bold text-gray-900 dark:text-white truncate" id="activeTaskCount">0 Görev</h2>
                     </div>
                 </div>
 
-                <div onclick="filterByStat('idea')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-neonAmber/60 rounded-2xl p-4 flex items-center gap-4 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
-                    <div class="w-12 h-12 rounded-xl bg-neonAmber/10 border border-neonAmber/20 flex items-center justify-center text-neonAmber text-lg group-hover:scale-105 transition-transform">
+                <div onclick="filterByStat('idea')" class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800/80 hover:border-neonAmber/60 rounded-xl px-3.5 py-2.5 flex items-center gap-3 relative overflow-hidden shadow-sm cursor-pointer transition-all group">
+                    <div class="w-9 h-9 rounded-lg bg-neonAmber/10 border border-neonAmber/20 flex items-center justify-center text-neonAmber text-sm group-hover:scale-105 transition-transform shrink-0">
                         <i class="fa-solid fa-lightbulb"></i>
                     </div>
-                    <div>
-                        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Notlar <i class="fa-solid fa-arrow-pointer text-[10px] text-neonAmber opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
-                        <h2 class="text-xl font-bold text-gray-900 dark:text-white" id="ideaCount">0 Not</h2>
+                    <div class="min-w-0">
+                        <span class="text-[10px] text-gray-500 dark:text-gray-400 font-medium block truncate">Notlar <i class="fa-solid fa-arrow-pointer text-[9px] text-neonAmber opacity-0 group-hover:opacity-100 transition-opacity"></i></span>
+                        <h2 class="text-base font-bold text-gray-900 dark:text-white truncate" id="ideaCount">0 Not</h2>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Hızlı Girdi Çekmecesi (Quick Capture Bar) -->
-        <section id="captureSection" class="bg-white dark:bg-cardBg border border-accent/40 shadow-lg shadow-accent/10 rounded-2xl p-3 sm:p-4 flex flex-col gap-3 relative transition-all">
+        <!-- Beyin Boşaltma Alanı (Sayfanın ortasına konumlandırıldı) -->
+        <section id="captureSection" class="bg-white dark:bg-cardBg border border-accent/40 shadow-xl shadow-accent/10 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 relative transition-all my-auto">
             <div class="flex items-center justify-between bg-gray-50 dark:bg-inputBg/80 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 text-xs">
                 <button onclick="changeStreamDate(-1)" class="w-8 h-8 rounded-lg bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm">
                     <i class="fa-solid fa-chevron-left text-xs"></i>
@@ -151,18 +151,18 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <div class="text-accent pl-2">
+                <div class="text-accent pl-2 text-lg">
                     <i class="fa-solid fa-brain"></i>
                 </div>
                 <input type="text" id="streamInput" autofocus
-                    class="flex-1 bg-transparent border-none outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-base"
+                    class="flex-1 bg-transparent border-none outline-none text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-base py-2"
                     placeholder="Beyin Boşaltma (Brain Dump): Aklındakileri yaz, #etiket ekle ve Enter'a bas..."
                     onkeydown="handleKeyDown(event)">
             </div>
             
             <div class="flex flex-wrap items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800/60 gap-2 text-xs">
                 <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                    <span class="text-[11px]"><i class="fa-solid fa-bolt mr-1 text-accent"></i> <b>Ctrl + K</b> ile her an hızlı giriş yapabilirsin.</span>
+                    <span class="text-[11px]"><i class="fa-solid fa-bolt mr-1 text-accent"></i> <b>Ctrl + K</b> hızlı odak.</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <input type="date" id="streamDateInput" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer" title="Tarih seçin (Boş bırakılırsa Havuz'a gider)">
@@ -401,9 +401,9 @@
                 const btn = document.getElementById(`mood-btn-${m}`);
                 if (btn) {
                     if (m === userProfile.mood) {
-                        btn.className = "text-xl scale-125 font-bold transition-all cursor-pointer filter drop-shadow-[0_0_8px_rgba(99,102,241,0.8)]";
+                        btn.className = "text-sm scale-125 font-bold transition-all cursor-pointer filter drop-shadow-[0_0_8px_rgba(99,102,241,0.8)]";
                     } else {
-                        btn.className = "text-sm opacity-50 hover:opacity-100 transition-all cursor-pointer";
+                        btn.className = "text-xs opacity-50 hover:opacity-100 transition-all cursor-pointer";
                     }
                 }
             });
@@ -829,7 +829,7 @@
                 const osc = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 notesu hafif çınlama
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
                 gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
                 osc.connect(gainNode);
