@@ -28,10 +28,18 @@
         }
     </script>
 </head>
-<body class="bg-darkBg text-gray-100 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-white transition-colors duration-300" id="bodyRoot">
+<body class="dark:bg-darkBg dark:text-gray-100 bg-gray-50 text-gray-900 min-h-screen flex flex-col font-sans selection:bg-accent selection:text-white transition-colors duration-300" id="bodyRoot">
+
+    <!-- Yükleniyor Katmanı -->
+    <div id="loadingOverlay" class="fixed inset-0 dark:bg-darkBg bg-gray-50 z-[100] flex items-center justify-center transition-opacity duration-300">
+        <div class="flex flex-col items-center gap-3 text-gray-400">
+            <i class="fa-solid fa-circle-notch fa-spin text-2xl text-accent"></i>
+            <span class="text-xs font-medium">CoreOS yükleniyor...</span>
+        </div>
+    </div>
 
     <!-- Üst Komuta Merkezi Navigasyonu -->
-    <header class="bg-[#0f172a]/85 dark:bg-[#0f172a]/85 bg-white/85 backdrop-blur-md border-b border-gray-800 dark:border-gray-800 border-gray-200 sticky top-0 z-50 px-4 sm:px-6 py-3.5 transition-colors">
+    <header class="bg-white/85 dark:bg-[#0f172a]/85 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 px-4 sm:px-6 py-3.5 transition-colors">
         <div class="max-w-5xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-accent to-indigo-400 flex items-center justify-center shadow-lg shadow-accent/20">
@@ -42,7 +50,7 @@
                         CoreOS <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="headerProfileBadge">PRO</span>
                     </h1>
                     <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                        <span id="currentDateString">Bugün</span> 
+                        <span id="currentDateString">Bugün</span>
                         <span class="text-[10px] bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.2 rounded hidden sm:inline">Kısayol: Ctrl+K</span>
                     </p>
                 </div>
@@ -62,7 +70,7 @@
                     <button onclick="switchMainView('pool')" id="nav-pool" class="px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-water text-neonAmber"></i> Havuz</button>
                     <button onclick="switchMainView('calendar')" id="nav-calendar" class="px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1"><i class="fa-solid fa-calendar-days text-accent"></i> Takvim</button>
                 </div>
-                
+
                 <button onclick="toggleTheme()" class="bg-gray-100 dark:bg-inputBg hover:bg-gray-200 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 w-9 h-9 rounded-xl flex items-center justify-center transition-all cursor-pointer text-xs" title="Tema Değiştir">
                     <i id="themeIcon" class="fa-solid fa-moon text-accent"></i>
                 </button>
@@ -84,7 +92,7 @@
 
     <!-- Ana İçerik Ekranı -->
     <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
-        
+
         <!-- Üst İnce Hat Enerji/Mod Çubuğu ve Küçültülmüş İstatistik Kartları -->
         <section id="statsSection" class="flex flex-col gap-2.5">
             <!-- İnce Yatay Mod Çubuğu -->
@@ -134,7 +142,7 @@
             </div>
         </section>
 
-        <!-- Beyin Boşaltma Alanı (Sayfanın ortasına konumlandırıldı) -->
+        <!-- Beyin Boşaltma Alanı -->
         <section id="captureSection" class="bg-white dark:bg-cardBg border border-accent/40 shadow-xl shadow-accent/10 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 relative transition-all my-auto">
             <div class="flex items-center justify-between bg-gray-50 dark:bg-inputBg/80 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 text-xs">
                 <button onclick="changeStreamDate(-1)" class="w-8 h-8 rounded-lg bg-white dark:bg-cardBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-700 text-accent flex items-center justify-center transition-all cursor-pointer shadow-sm">
@@ -159,7 +167,7 @@
                     placeholder="Beyin Boşaltma (Brain Dump): Aklındakileri yaz, #etiket ekle ve Enter'a bas..."
                     onkeydown="handleKeyDown(event)">
             </div>
-            
+
             <div class="flex flex-wrap items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-800/60 gap-2 text-xs">
                 <div class="flex items-center gap-2 text-gray-500 dark:text-gray-400">
                     <span class="text-[11px]"><i class="fa-solid fa-bolt mr-1 text-accent"></i> <b>Ctrl + K</b> hızlı odak.</span>
@@ -167,7 +175,7 @@
                 <div class="flex items-center gap-2">
                     <input type="date" id="streamDateInput" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer" title="Tarih seçin (Boş bırakılırsa Havuz'a gider)">
                     <input type="time" id="streamTime" value="09:00" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-2.5 py-1.5 outline-none text-xs font-medium cursor-pointer">
-                    
+
                     <select id="streamType" class="bg-gray-50 dark:bg-inputBg text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-1.5 outline-none text-xs font-medium cursor-pointer">
                         <option value="idea">💡 Not</option>
                         <option value="task">✅ Görev</option>
@@ -175,7 +183,7 @@
                         <option value="reminder">⏰ Hatırlatıcı</option>
                         <option value="event">🤝 Randevu/Etkinlik</option>
                     </select>
-                    <button onclick="addStreamItem()" 
+                    <button onclick="addStreamItem()"
                         class="bg-accent hover:bg-accentHover text-white px-4 py-1.5 rounded-xl transition-all font-semibold flex items-center gap-1.5 shadow-md shadow-accent/20 cursor-pointer">
                         <span>Kaydet</span>
                         <i class="fa-solid fa-arrow-up-right text-[10px]"></i>
@@ -184,7 +192,7 @@
             </div>
         </section>
 
-        <!-- Dinamik Etiket Bulutu (Tag Cloud) -->
+        <!-- Dinamik Etiket Bulutu -->
         <section id="tagCloudSection" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
             <span class="text-gray-400 font-medium shrink-0"><i class="fa-solid fa-tags text-accent mr-1"></i> Etiketler:</span>
             <div id="tagCloudContainer" class="flex items-center gap-1.5"></div>
@@ -200,7 +208,7 @@
                 <button onclick="setFilter('reminder')" id="filter-reminder" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Hatırlatıcılar</button>
                 <button onclick="setFilter('event')" id="filter-event" class="filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap">Randevular</button>
             </div>
-            
+
             <div class="flex items-center gap-2 text-xs">
                 <div class="bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-3 py-1.5 flex items-center gap-2 text-gray-700 dark:text-gray-300 shadow-sm">
                     <span class="flex items-center gap-1 text-neonGreen font-semibold"><i class="fa-solid fa-circle-check text-[10px]"></i> <span id="badgeCompletedCount">0</span> Bitti</span>
@@ -242,13 +250,12 @@
         </div>
     </div>
 
-    <!-- Pomodoro Sayaç Modalı (Süre ayarlanabilir) -->
+    <!-- Pomodoro Sayaç Modalı -->
     <div id="pomodoroModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl flex flex-col items-center gap-5 text-center">
             <h3 class="font-bold text-gray-900 dark:text-white text-base flex items-center gap-2">
                 <i class="fa-solid fa-stopwatch text-accent"></i> Pomodoro Odak Modu
             </h3>
-            <!-- Süre Ayar Girişi -->
             <div class="flex items-center gap-2 text-xs">
                 <label class="text-gray-500">Süre (Dakika):</label>
                 <input type="number" id="pomoCustomMinutes" value="25" min="1" max="120" onchange="updatePomoCustomTime(this.value)" class="w-16 bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl px-2 py-1 text-center font-bold text-accent outline-none">
@@ -262,17 +269,17 @@
         </div>
     </div>
 
-    <!-- Takvim Gün Detayı Modalı -->
-    <div id="calendarDayModal" class="fixed inset-0 bg-darkBg/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
-            <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-800">
-                <h3 id="calendarModalDateTitle" class="font-bold text-gray-900 dark:text-white text-base">Gün Detayları</h3>
-                <button onclick="closeCalendarDayModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- Takvim Gün Detayı Açılır Penceresi (küçük popover) -->
+    <div id="calendarDayModal" class="hidden fixed z-50 w-72 max-w-[85vw]">
+        <div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-4 shadow-2xl flex flex-col gap-3 animate-in fade-in zoom-in duration-150">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-gray-800">
+                <h3 id="calendarModalDateTitle" class="font-bold text-gray-900 dark:text-white text-sm">Gün Detayları</h3>
+                <button onclick="closeCalendarDayModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-sm"></i></button>
             </div>
-            <div id="calendarModalItemsList" class="flex flex-col gap-2.5 max-h-[50vh] overflow-y-auto"></div>
-            <div class="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-800 text-xs">
-                <button onclick="jumpToStreamDateFromModal()" class="bg-accent/20 hover:bg-accent text-accent hover:text-white px-3.5 py-2 rounded-xl transition-all font-medium cursor-pointer">Bu Güne Git & Ekle</button>
-                <button onclick="closeCalendarDayModal()" class="px-4 py-2 rounded-xl bg-gray-100 dark:bg-inputBg text-gray-700 dark:text-gray-300 transition-all cursor-pointer">Kapat</button>
+            <div id="calendarModalItemsList" class="flex flex-col gap-2 max-h-[240px] overflow-y-auto"></div>
+            <div class="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-800 text-[11px]">
+                <button onclick="jumpToStreamDateFromModal()" class="bg-accent/20 hover:bg-accent text-accent hover:text-white px-3 py-1.5 rounded-lg transition-all font-medium cursor-pointer">Bu Güne Git & Ekle</button>
+                <button onclick="closeCalendarDayModal()" class="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-inputBg text-gray-700 dark:text-gray-300 transition-all cursor-pointer">Kapat</button>
             </div>
         </div>
     </div>
@@ -359,17 +366,60 @@
 
     <!-- JavaScript Komuta Motoru -->
     <script>
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('currentDateString').innerText = new Date().toLocaleDateString('tr-TR', options);
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDateString').innerText = new Date().toLocaleDateString('tr-TR', dateOptions);
 
-        let userProfile = JSON.parse(localStorage.getItem('nexus_user_profile')) || { name: 'CoreOS', badge: 'PRO', mood: '⚡' };
-        let currentTheme = localStorage.getItem('nexus_theme') || 'dark';
+        const typeMeta = {
+            idea:     { icon: 'fa-lightbulb text-neonAmber',        bg: 'bg-neonAmber/10 border-neonAmber/20', label: 'Not' },
+            task:     { icon: 'fa-check-to-slot text-accent',       bg: 'bg-accent/10 border-accent/20',       label: 'Görev' },
+            goal:     { icon: 'fa-bullseye text-neonPurple',        bg: 'bg-neonPurple/10 border-neonPurple/20', label: 'Hedef' },
+            reminder: { icon: 'fa-clock text-neonGreen',            bg: 'bg-neonGreen/10 border-neonGreen/20', label: 'Hatırlatıcı' },
+            event:    { icon: 'fa-handshake text-neonAmber',        bg: 'bg-neonAmber/10 border-neonAmber/20', label: 'Randevu' },
+        };
+
+        // ---- Durum (state) ----
+        let userProfile = { name: 'CoreOS', badge: 'PRO', mood: '⚡' };
+        let currentTheme = 'dark';
+        let items = [
+            { id: 1, content: "CoreOS Komuta Merkezi yapılandırıldı #sistem", type: "idea", status: "active", date: new Date().toISOString().split('T')[0], time: "09:00" },
+            { id: 2, content: "Haftalık stratejik planlama gözden geçirilecek #is", type: "task", status: "active", date: new Date().toISOString().split('T')[0], time: "10:30" }
+        ];
+        const notifiedIds = new Set();
+
+        let currentMainView = 'stream';
+        let currentFilter = 'all';
+        let selectedTagFilter = null;
+        let streamSelectedDate = new Date().toISOString().split('T')[0];
+        let calendarSelectedDateStr = null;
+        let calendarViewDate = new Date();
+
+        // ---- Kalıcı Depolama (window.storage) ----
+        async function loadData() {
+            try {
+                const result = await window.storage.get('coreos-data', false);
+                if (result && result.value) {
+                    const parsed = JSON.parse(result.value);
+                    if (parsed.userProfile) userProfile = parsed.userProfile;
+                    if (parsed.theme) currentTheme = parsed.theme;
+                    if (Array.isArray(parsed.items)) items = parsed.items;
+                }
+            } catch (e) {
+                // Henüz kayıtlı veri yok, varsayılanlar kullanılacak.
+            }
+        }
+
+        async function persist() {
+            try {
+                await window.storage.set('coreos-data', JSON.stringify({ userProfile, theme: currentTheme, items }), false);
+            } catch (e) {
+                console.error('CoreOS kayıt hatası:', e);
+            }
+        }
 
         function applyUserProfile() {
-            document.getElementById('appTitleDisplay').innerHTML = `${userProfile.name} <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="headerProfileBadge">${userProfile.badge}</span>`;
+            document.getElementById('appTitleDisplay').innerHTML = `${escapeHtml(userProfile.name)} <span class="text-[10px] bg-accent/20 text-accent font-medium px-2 py-0.5 rounded-full border border-accent/30" id="headerProfileBadge">${escapeHtml(userProfile.badge)}</span>`;
             document.getElementById('profileNameBtn').innerText = userProfile.name;
         }
-        applyUserProfile();
 
         function applyTheme() {
             const root = document.documentElement;
@@ -382,18 +432,17 @@
                 themeIcon.className = "fa-solid fa-moon text-accent";
             }
         }
-        applyTheme();
 
-        function toggleTheme() {
+        async function toggleTheme() {
             currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('nexus_theme', currentTheme);
             applyTheme();
+            await persist();
         }
 
-        function setMood(mood) {
+        async function setMood(mood) {
             userProfile.mood = mood;
-            localStorage.setItem('nexus_user_profile', JSON.stringify(userProfile));
             updateMoodDisplay();
+            await persist();
         }
 
         function updateMoodDisplay() {
@@ -408,17 +457,6 @@
                 }
             });
         }
-
-        let items = JSON.parse(localStorage.getItem('nexus_items')) || [
-            { id: 1, content: "CoreOS Komuta Merkezi yapılandırıldı #sistem", type: "idea", status: "active", date: new Date().toISOString().split('T')[0], time: "09:00" },
-            { id: 2, content: "Haftalık stratejik planlama gözden geçirilecek #is", type: "task", status: "active", date: new Date().toISOString().split('T')[0], time: "10:30" }
-        ];
-
-        let currentMainView = 'stream';
-        let currentFilter = 'all';
-        let selectedTagFilter = null;
-        let streamSelectedDate = new Date().toISOString().split('T')[0];
-        let calendarSelectedDateStr = null;
 
         function formatDateLabel(dateStr) {
             const todayStr = new Date().toISOString().split('T')[0];
@@ -435,7 +473,6 @@
             else resetBtn.classList.add('hidden');
             document.getElementById('streamDateInput').value = streamSelectedDate;
         }
-        updateDateLabelDisplay();
 
         document.getElementById('streamDateInput').addEventListener('change', (e) => {
             if (e.target.value) {
@@ -464,7 +501,7 @@
             ['stream', 'kanban', 'pool', 'calendar'].forEach(v => {
                 const btn = document.getElementById(`nav-${v}`);
                 const btnM = document.getElementById(`nav-${v}-m`);
-                if (btn) btn.className = v === view ? "px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all shadow-sm cursor-pointer" : "px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-white transition-all cursor-pointer flex items-center gap-1";
+                if (btn) btn.className = v === view ? "px-3 py-1.5 rounded-lg bg-accent text-white font-medium transition-all shadow-sm cursor-pointer" : "px-3 py-1.5 rounded-lg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all cursor-pointer flex items-center gap-1";
                 if (btnM) btnM.className = v === view ? "py-1.5 rounded-lg bg-accent text-white font-medium" : "py-1.5 rounded-lg text-gray-600 dark:text-gray-400";
             });
 
@@ -490,7 +527,7 @@
 
         function handleKeyDown(event) { if (event.key === 'Enter') addStreamItem(); }
 
-        function addStreamItem() {
+        async function addStreamItem() {
             const input = document.getElementById('streamInput');
             const content = input.value.trim();
             if (!content) return;
@@ -501,13 +538,13 @@
             if (currentMainView === 'pool') date = null;
 
             items.unshift({ id: Date.now(), content, type, status: 'active', date, time });
-            saveAndRender();
+            await saveAndRender();
             input.value = '';
             input.focus();
         }
 
-        function saveAndRender() {
-            localStorage.setItem('nexus_items', JSON.stringify(items));
+        async function saveAndRender() {
+            await persist();
             renderMainView();
             updateStats();
             renderTagCloud();
@@ -531,7 +568,7 @@
         function setFilter(filter) {
             currentFilter = filter;
             selectedTagFilter = null;
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.className = "filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap");
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.className = "filter-btn px-3.5 py-2 rounded-xl bg-white dark:bg-cardBg text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-cardHover transition-all cursor-pointer whitespace-nowrap");
             const activeBtn = document.getElementById(`filter-${filter}`);
             if (activeBtn) activeBtn.className = "filter-btn px-3.5 py-2 rounded-xl bg-accent text-white transition-all shadow-sm cursor-pointer whitespace-nowrap";
             renderMainView();
@@ -612,12 +649,7 @@
         function createItemCard(item) {
             const card = document.createElement('div');
             const isCompleted = item.status === 'completed';
-            let typeIcon = 'fa-lightbulb text-neonAmber', typeBg = 'bg-neonAmber/10 border-neonAmber/20', typeLabel = 'Not';
-
-            if (item.type === 'task') { typeIcon = 'fa-check-to-slot text-accent'; typeBg = 'bg-accent/10 border-accent/20'; typeLabel = 'Görev'; }
-            else if (item.type === 'goal') { typeIcon = 'fa-bullseye text-neonPurple'; typeBg = 'bg-neonPurple/10 border-neonPurple/20'; typeLabel = 'Hedef'; }
-            else if (item.type === 'reminder') { typeIcon = 'fa-clock text-neonGreen'; typeBg = 'bg-neonGreen/10 border-neonGreen/20'; typeLabel = 'Hatırlatıcı'; }
-            else if (item.type === 'event') { typeIcon = 'fa-handshake text-neonAmber'; typeBg = 'bg-neonAmber/10 border-neonAmber/20'; typeLabel = 'Randevu'; }
+            const meta = typeMeta[item.type] || typeMeta.idea;
 
             card.className = `bg-white dark:bg-cardBg border ${isCompleted ? 'border-neonGreen/40 opacity-75' : 'border-gray-200 dark:border-gray-800 hover:border-accent/50'} rounded-2xl p-4 flex items-center justify-between gap-4 transition-all shadow-sm`;
 
@@ -625,12 +657,12 @@
 
             card.innerHTML = `
                 <div class="flex items-center gap-3.5 flex-1 min-w-0">
-                    <div class="w-10 h-10 rounded-xl border ${typeBg} flex items-center justify-center shrink-0">
-                        <i class="fa-solid ${typeIcon} text-sm"></i>
+                    <div class="w-10 h-10 rounded-xl border ${meta.bg} flex items-center justify-center shrink-0">
+                        <i class="fa-solid ${meta.icon} text-sm"></i>
                     </div>
                     <div class="flex flex-col gap-0.5 min-w-0 flex-1">
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">${typeLabel}</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">${meta.label}</span>
                             ${item.time ? `<span class="text-[10px] font-mono bg-gray-100 dark:bg-inputBg text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded">${item.time}</span>` : ''}
                             ${item.date ? `<span class="text-[10px] text-gray-400"><i class="fa-solid fa-calendar-days mr-1"></i>${item.date}</span>` : '<span class="text-[10px] text-neonAmber font-medium"><i class="fa-solid fa-water mr-1"></i>Havuzda</span>'}
                         </div>
@@ -646,10 +678,10 @@
             return card;
         }
 
-        function escapeHtml(text) { return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-        function toggleComplete(id) { const item = items.find(i => i.id === id); if (item) { item.status = item.status === 'completed' ? 'active' : 'completed'; saveAndRender(); } }
-        function deleteItem(id) { items = items.filter(i => i.id !== id); saveAndRender(); }
-        function clearCompleted() { items = items.filter(i => i.status !== 'completed'); saveAndRender(); }
+        function escapeHtml(text) { return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+        async function toggleComplete(id) { const item = items.find(i => i.id === id); if (item) { item.status = item.status === 'completed' ? 'active' : 'completed'; await saveAndRender(); } }
+        async function deleteItem(id) { items = items.filter(i => i.id !== id); await saveAndRender(); }
+        async function clearCompleted() { items = items.filter(i => i.status !== 'completed'); await saveAndRender(); }
 
         function renderKanbanView(container) {
             container.innerHTML = `
@@ -669,70 +701,147 @@
                 </div>
             `;
             const activeCol = document.getElementById('kanban-active'), inProgressCol = document.getElementById('kanban-inProgress'), completedCol = document.getElementById('kanban-completed');
+
+            if (items.length === 0) {
+                activeCol.innerHTML = `<p class="text-[11px] text-gray-400 text-center py-4">Henüz kayıt yok.</p>`;
+            }
+
             items.forEach(item => {
+                const meta = typeMeta[item.type] || typeMeta.idea;
                 const card = document.createElement('div');
                 card.className = "bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl p-3 flex flex-col gap-2 text-xs";
-                card.innerHTML = `<div class="flex items-center justify-between"><span class="font-bold text-accent">${item.type}</span><div class="flex items-center gap-1"><button onclick="moveKanban(${item.id}, 'prev')"><i class="fa-solid fa-chevron-left"></i></button><button onclick="moveKanban(${item.id}, 'next')"><i class="fa-solid fa-chevron-right"></i></button></div></div><p class="font-medium">${escapeHtml(item.content)}</p>`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="font-bold text-accent flex items-center gap-1"><i class="fa-solid ${meta.icon.split(' ')[0]}"></i> ${meta.label}</span>
+                        <div class="flex items-center gap-1 text-gray-400">
+                            <button onclick="moveKanban(${item.id}, 'prev')" class="hover:text-accent cursor-pointer px-1" title="Geri al"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button onclick="moveKanban(${item.id}, 'next')" class="hover:text-accent cursor-pointer px-1" title="İlerlet"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button onclick="openEditModal(${item.id})" class="hover:text-accent cursor-pointer px-1" title="Düzenle"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteItem(${item.id})" class="hover:text-red-500 cursor-pointer px-1" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <p class="font-medium text-gray-800 dark:text-gray-200">${escapeHtml(item.content)}</p>
+                `;
                 if (item.status === 'completed') completedCol.appendChild(card);
                 else if (item.status === 'inProgress') inProgressCol.appendChild(card);
                 else activeCol.appendChild(card);
             });
         }
 
-        function moveKanban(id, dir) {
+        async function moveKanban(id, dir) {
             const item = items.find(i => i.id === id);
             if (!item) return;
             if (dir === 'next') { if (item.status === 'active') item.status = 'inProgress'; else if (item.status === 'inProgress') item.status = 'completed'; }
             else { if (item.status === 'completed') item.status = 'inProgress'; else if (item.status === 'inProgress') item.status = 'active'; }
-            saveAndRender();
+            await saveAndRender();
+        }
+
+        function changeCalendarMonth(delta) {
+            calendarViewDate = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + delta, 1);
+            renderMainView();
+        }
+
+        function goToCurrentMonth() {
+            calendarViewDate = new Date();
+            renderMainView();
         }
 
         function renderCalendarView(container) {
-            const now = new Date(), year = now.getFullYear(), month = now.getMonth(), firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate();
-            container.innerHTML = `<div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-6 flex flex-col gap-6"><h3 class="font-bold text-base"><i class="fa-solid fa-calendar-days text-accent"></i> Takvim</h3><div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-gray-400"><span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span></div><div class="grid grid-cols-7 gap-2" id="calendarGrid"></div></div>`;
+            const year = calendarViewDate.getFullYear(), month = calendarViewDate.getMonth();
+            const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate();
+            const monthLabel = calendarViewDate.toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' });
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            container.innerHTML = `<div class="bg-white dark:bg-cardBg border border-gray-200 dark:border-gray-800 rounded-2xl p-6 flex flex-col gap-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-calendar-days text-accent"></i> ${monthLabel}</h3>
+                    <div class="flex items-center gap-2">
+                        <button onclick="changeCalendarMonth(-1)" class="w-8 h-8 rounded-lg bg-gray-50 dark:bg-inputBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-800 text-accent flex items-center justify-center cursor-pointer"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                        <button onclick="goToCurrentMonth()" class="text-[10px] bg-accent/20 text-accent px-2.5 py-1.5 rounded-lg hover:bg-accent hover:text-white transition-all cursor-pointer font-medium">Bu Ay</button>
+                        <button onclick="changeCalendarMonth(1)" class="w-8 h-8 rounded-lg bg-gray-50 dark:bg-inputBg hover:bg-gray-100 dark:hover:bg-cardHover border border-gray-200 dark:border-gray-800 text-accent flex items-center justify-center cursor-pointer"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-gray-400"><span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span></div>
+                <div class="grid grid-cols-7 gap-2" id="calendarGrid"></div>
+            </div>`;
             const grid = document.getElementById('calendarGrid');
             for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) grid.appendChild(document.createElement('div'));
             for (let d = 1; d <= daysInMonth; d++) {
                 const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 const dayItems = items.filter(i => i.date === dayStr);
+                const isToday = dayStr === todayStr;
                 const cell = document.createElement('div');
-                cell.className = "min-h-[85px] bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 rounded-xl p-2 cursor-pointer hover:border-accent text-xs flex flex-col justify-between";
-                cell.onclick = () => openCalendarDayModal(dayStr);
-                
+                cell.className = `calendar-day-cell min-h-[85px] bg-gray-50 dark:bg-inputBg border ${isToday ? 'border-accent' : 'border-gray-200 dark:border-gray-800'} rounded-xl p-2 cursor-pointer hover:border-accent text-xs flex flex-col justify-between transition-all`;
+                cell.onclick = (e) => openCalendarDayModal(dayStr, e);
+
                 let indicatorHtml = '';
                 if (dayItems.length > 0) {
                     indicatorHtml = `<span class="mt-1 bg-accent/20 text-accent font-bold px-1.5 py-0.5 rounded text-[10px] text-center">${dayItems.length} kayıt</span>`;
                 }
-                cell.innerHTML = `<div class="flex items-center justify-between"><span class="font-bold">${d}</span></div>${indicatorHtml}`;
+                cell.innerHTML = `<div class="flex items-center justify-between"><span class="font-bold ${isToday ? 'text-accent' : ''}">${d}</span></div>${indicatorHtml}`;
                 grid.appendChild(cell);
             }
         }
 
-        function openCalendarDayModal(dateStr) {
+        function openCalendarDayModal(dateStr, event) {
             calendarSelectedDateStr = dateStr;
             document.getElementById('calendarModalDateTitle').innerText = formatDateLabel(dateStr);
             const listContainer = document.getElementById('calendarModalItemsList');
             listContainer.innerHTML = '';
-            
+
             const dayItems = items.filter(i => i.date === dateStr);
             if (dayItems.length === 0) {
                 listContainer.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">Bu tarihe ait kayıt bulunmuyor.</p>`;
             } else {
                 dayItems.forEach(item => {
+                    const meta = typeMeta[item.type] || typeMeta.idea;
                     const el = document.createElement('div');
                     el.className = "bg-gray-50 dark:bg-inputBg border border-gray-200 dark:border-gray-800 p-2.5 rounded-xl flex items-center justify-between text-xs";
-                    el.innerHTML = `<span><b>[${item.type}]</b> ${escapeHtml(item.content)}</span>`;
+                    el.innerHTML = `<span><b>[${meta.label}]</b> ${escapeHtml(item.content)}</span>`;
                     listContainer.appendChild(el);
                 });
             }
-            document.getElementById('calendarDayModal').classList.remove('hidden');
-            document.getElementById('calendarDayModal').classList.add('flex');
+
+            const modal = document.getElementById('calendarDayModal');
+            modal.classList.remove('hidden');
+
+            // Tıklanan güne yakın konumlandır, ekran dışına taşmasını önle
+            const cell = event && event.currentTarget;
+            if (cell) {
+                const rect = cell.getBoundingClientRect();
+                const modalWidth = 288;
+                const estimatedHeight = 220;
+
+                let left = rect.left + window.scrollX;
+                let top = rect.bottom + window.scrollY + 8;
+
+                if (left + modalWidth > window.scrollX + window.innerWidth - 12) {
+                    left = window.scrollX + window.innerWidth - modalWidth - 12;
+                }
+                if (left < window.scrollX + 12) left = window.scrollX + 12;
+
+                if (top + estimatedHeight > window.scrollY + window.innerHeight) {
+                    top = rect.top + window.scrollY - estimatedHeight - 8;
+                    if (top < window.scrollY + 12) top = window.scrollY + 12;
+                }
+
+                modal.style.left = `${left}px`;
+                modal.style.top = `${top}px`;
+            }
         }
 
         function closeCalendarDayModal() {
             document.getElementById('calendarDayModal').classList.add('hidden');
-            document.getElementById('calendarDayModal').classList.remove('flex');
         }
+
+        // Popover dışına tıklanınca kapat (takvim hücreleri hariç)
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('calendarDayModal');
+            if (modal.classList.contains('hidden')) return;
+            if (!modal.contains(e.target) && !e.target.closest('.calendar-day-cell')) {
+                closeCalendarDayModal();
+            }
+        });
 
         function jumpToStreamDateFromModal() {
             if (calendarSelectedDateStr) {
@@ -756,33 +865,35 @@
 
         function closeModal() { document.getElementById('itemModal').classList.add('hidden'); document.getElementById('itemModal').classList.remove('flex'); }
 
-        function saveModalItem() {
+        async function saveModalItem() {
             const id = Number(document.getElementById('modalItemId').value);
             const item = items.find(i => i.id === id);
             if (item) {
-                item.content = document.getElementById('modalContent').value.trim();
+                const newContent = document.getElementById('modalContent').value.trim();
+                if (newContent) item.content = newContent;
                 item.type = document.getElementById('modalType').value;
                 const dt = document.getElementById('modalDate').value;
                 if (dt) { const [d, t] = dt.split('T'); item.date = d; item.time = t; }
-                saveAndRender();
+                else { item.date = null; }
+                await saveAndRender();
             }
             closeModal();
         }
 
-        function openSettingsModal() { 
-            document.getElementById('settingsAppName').value = userProfile.name; 
-            document.getElementById('settingsAppBadge').value = userProfile.badge; 
-            document.getElementById('settingsModal').classList.remove('hidden'); 
-            document.getElementById('settingsModal').classList.add('flex'); 
+        function openSettingsModal() {
+            document.getElementById('settingsAppName').value = userProfile.name;
+            document.getElementById('settingsAppBadge').value = userProfile.badge;
+            document.getElementById('settingsModal').classList.remove('hidden');
+            document.getElementById('settingsModal').classList.add('flex');
         }
         function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); document.getElementById('settingsModal').classList.remove('flex'); }
-        function saveSettingsModal() {
+        async function saveSettingsModal() {
             const name = document.getElementById('settingsAppName').value.trim();
             const badge = document.getElementById('settingsAppBadge').value.trim();
             if (name) userProfile.name = name;
             if (badge) userProfile.badge = badge;
-            localStorage.setItem('nexus_user_profile', JSON.stringify(userProfile));
             applyUserProfile();
+            await persist();
             closeSettingsModal();
         }
 
@@ -796,24 +907,34 @@
             const reader = new FileReader();
             if (e.target.files[0]) {
                 reader.readAsText(e.target.files[0], "UTF-8");
-                reader.onload = (evt) => {
+                reader.onload = async (evt) => {
                     try {
                         const parsed = JSON.parse(evt.target.result);
                         if (parsed.items) items = parsed.items;
                         if (parsed.userProfile) userProfile = parsed.userProfile;
-                        saveAndRender();
+                        await persist();
+                        renderMainView();
+                        updateStats();
+                        renderTagCloud();
                         applyUserProfile();
                         alert('Yüklendi!');
                         closeSettingsModal();
-                    } catch (err) { alert('Hata!'); }
+                    } catch (err) { alert('Hata! Dosya okunamadı.'); }
                 };
             }
         }
 
-        function resetData() { if (confirm('Sıfırlansın mı?')) { items = []; localStorage.removeItem('nexus_items'); saveAndRender(); closeSettingsModal(); } }
+        async function resetData() {
+            if (confirm('Sıfırlansın mı?')) {
+                items = [];
+                await saveAndRender();
+                closeSettingsModal();
+            }
+        }
 
+        // ---- Pomodoro ----
         let pomoSeconds = 25 * 60, pomoInterval = null, pomoRunning = false;
-        
+
         function updatePomoCustomTime(mins) {
             const m = parseInt(mins);
             if (!isNaN(m) && m > 0) {
@@ -851,38 +972,39 @@
                         const sStr = String(pomoSeconds % 60).padStart(2, '0');
                         document.getElementById('pomodoroDisplay').innerText = `${mStr}:${sStr}`;
                         document.getElementById('modalTimerDisplay').innerText = `${mStr}:${sStr}`;
-                    } else { 
-                        clearInterval(pomoInterval); 
-                        pomoRunning = false; 
-                        btn.innerText = 'Başlat'; 
+                    } else {
+                        clearInterval(pomoInterval);
+                        pomoRunning = false;
+                        btn.innerText = 'Başlat';
                         playChimeSound();
-                        alert('Pomodoro süresi bitti!'); 
+                        alert('Pomodoro süresi bitti!');
                     }
                 }, 1000);
             } else { clearInterval(pomoInterval); pomoRunning = false; btn.innerText = 'Başlat'; }
         }
-        function resetPomodoro() { 
-            clearInterval(pomoInterval); 
-            pomoRunning = false; 
+        function resetPomodoro() {
+            clearInterval(pomoInterval);
+            pomoRunning = false;
             const customMins = parseInt(document.getElementById('pomoCustomMinutes').value) || 25;
-            pomoSeconds = customMins * 60; 
-            document.getElementById('pomodoroDisplay').innerText = `${String(customMins).padStart(2, '0')}:00`; 
+            pomoSeconds = customMins * 60;
+            document.getElementById('pomodoroDisplay').innerText = `${String(customMins).padStart(2, '0')}:00`;
             document.getElementById('modalTimerDisplay').innerText = document.getElementById('pomodoroDisplay').innerText;
             document.getElementById('pomoStartBtn').innerText = 'Başlat';
         }
 
+        // ---- Hatırlatıcı / Randevu Bildirimi ----
         function checkRemindersAndEvents() {
             const todayStr = new Date().toISOString().split('T')[0];
             const upcoming = items.find(i => i.date === todayStr && i.status === 'active' && (i.type === 'reminder' || i.type === 'event'));
-            if (upcoming && !sessionStorage.getItem(`notified_${upcoming.id}`)) {
+            if (upcoming && !notifiedIds.has(upcoming.id)) {
                 document.getElementById('popupTitle').innerText = upcoming.content;
                 document.getElementById('motivationModal').classList.remove('hidden');
                 document.getElementById('motivationModal').classList.add('flex');
-                sessionStorage.setItem(`notified_${upcoming.id}`, 'true');
+                notifiedIds.add(upcoming.id);
             }
         }
-        function closeMotivationModal(completed) {
-            if (completed) { saveAndRender(); }
+        async function closeMotivationModal(completed) {
+            if (completed) { await saveAndRender(); }
             document.getElementById('motivationModal').classList.add('hidden');
             document.getElementById('motivationModal').classList.remove('flex');
         }
@@ -895,10 +1017,21 @@
             }
         });
 
-        renderMainView();
-        updateStats();
-        renderTagCloud();
-        setTimeout(checkRemindersAndEvents, 1500);
+        // ---- Başlangıç ----
+        async function init() {
+            await loadData();
+            applyUserProfile();
+            applyTheme();
+            updateDateLabelDisplay();
+            renderMainView();
+            updateStats();
+            renderTagCloud();
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.style.display = 'none', 300);
+            setTimeout(checkRemindersAndEvents, 1500);
+        }
+        init();
     </script>
 </body>
 </html>
